@@ -1,0 +1,43 @@
+# --- Node / JS ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.tsbuildinfo
+
+# --- Next.js ---
+frontend/.next/
+frontend/out/
+# `next-env.d.ts` is intentionally NOT ignored: Next regenerates it, but committing it
+# means a fresh clone can run `npm run typecheck` before it has ever been built.
+
+# --- Rust / Soroban ---
+contracts/target/
+contracts/**/target/
+contracts/**/test_snapshots/
+# `Cargo.lock` is committed on purpose: FUNDING.json records a wasm sha256, and a
+# reproducible build means pinning the dependency graph that produced it.
+*.wasm
+!contracts/**/fixtures/*.wasm
+
+# --- Env & secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.secrets/
+
+# --- Runtime artifacts ---
+.tmp/
+data/
+*.sqlite
+*.sqlite3
+coverage/
+logs/
+
+# --- Editors / OS ---
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json

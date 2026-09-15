@@ -1,0 +1,35 @@
+{
+  "name": "subrosa-escrow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SubRosa Escrow — private sealed-bid escrow and auction engine on Stellar (Soroban + drand timelock encryption)",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.7.0"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace backend && npm run build --workspace frontend",
+    "typecheck": "npm run typecheck --workspace backend && npm run typecheck --workspace frontend",
+    "test": "npm run test --workspace backend && npm run test --workspace frontend",
+    "lint": "npm run lint --workspace backend && npm run lint --workspace frontend",
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "contract:build": "make -C contracts build",
+    "contract:test": "make -C contracts test",
+    "contract:deploy:testnet": "make -C contracts deploy-testnet"
+  },
+  "keywords": [
+    "stellar",
+    "soroban",
+    "escrow",
+    "sealed-bid",
+    "auction",
+    "drand",
+    "timelock-encryption",
+    "privacy"
+  ]
+}

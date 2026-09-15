@@ -1,0 +1,49 @@
+{
+  "$comment": "Byte-exact encodings shared with the Soroban contract. Generated with node:crypto from the documented preimage layouts in contracts/subrosa_escrow/src/types.rs and asserted by both contracts/subrosa_escrow/src/test.rs::golden_* and backend/src/__tests__/commitment.test.ts. If you ever regenerate these, regenerate both tests.",
+  "bid": {
+    "domain": "subrosa.bid.v1",
+    "auctionId": "42",
+    "amount": "1500000",
+    "salt": "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100",
+    "preimageHex": "737562726f73612e6269642e7631000000000000002a0000000000000000000000000016e3601f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100",
+    "preimageBytes": 70,
+    "commitment": "6e0f4a6196ddee2b1985fb24cc35757167ae8b5ed8b07528dde5a7db227ce66f"
+  },
+  "beacon": {
+    "domain": "subrosa.beacon.v1",
+    "chainHash": "52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971",
+    "round": "1000",
+    "randomness": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "auctionId": "42",
+    "preimageHex": "737562726f73612e626561636f6e2e763152db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e97100000000000003e8000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f000000000000002a",
+    "preimageBytes": 97,
+    "digest": "15a00e8ed831253df0f37aa4d4de8dfc0e75821dace0ba5b04815373d60eb575"
+  },
+  "largeValues": {
+    "$comment": "Amounts above 2^53 and above 2^63, where a number-typed encoder would silently diverge from Rust's i128::to_be_bytes and produce commitments the contract rejects.",
+    "cases": [
+      {
+        "auctionId": "1",
+        "amount": "9007199254740993",
+        "salt": "0000000000000000000000000000000000000000000000000000000000000001",
+        "preimageHex": "737562726f73612e6269642e76310000000000000001000000000000000000200000000000010000000000000000000000000000000000000000000000000000000000000001",
+        "commitment": "109857154c99f11c5a6dc4e6a2e3c710bb5df236b91c422447b4fc9966c158e1"
+      },
+      {
+        "auctionId": "18446744073709551615",
+        "amount": "170141183460469231731687303715884105727",
+        "salt": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "preimageHex": "737562726f73612e6269642e7631ffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "commitment": "cf0eb4cad787e092ce78a41922434931ae1e4633614f1323a31155d7d129feac"
+      }
+    ]
+  },
+  "negative": {
+    "$comment": "Two's complement i128 encoding. Bids are always positive, but the encoder is shared with potential future uses and a signed encoding bug would be invisible until it mattered.",
+    "auctionId": "7",
+    "amount": "-1",
+    "salt": "0000000000000000000000000000000000000000000000000000000000000000",
+    "preimageHex": "737562726f73612e6269642e76310000000000000007ffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000",
+    "commitment": "fdbaf18bf75b3cca0eb1bf8372fca5536e76eb2e2068b54fc5a0685b49e8ff3c"
+  }
+}

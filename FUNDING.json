@@ -1,0 +1,226 @@
+{
+  "$schema": "https://raw.githubusercontent.com/subrosa-escrow/subrosa-escrow/main/FUNDING.json",
+  "version": "1.0.0",
+  "generated": {
+    "tool": "scripts/sync-funding.mjs",
+    "policy": "human-authored fields are never overwritten; only the `protocol.deployments[*].contracts` and `protocol.artifacts` blocks are machine-written from a build+deploy run"
+  },
+
+  "project": {
+    "name": "SubRosa Escrow",
+    "slug": "subrosa-escrow",
+    "description": "A private sealed-bid escrow and auction engine on Stellar. Bids are encrypted with drand timelock encryption, so no plaintext bid exists anywhere until the reveal round's randomness beacon is published. Escrow, bonds and settlement are enforced by a Soroban contract.",
+    "category": ["defi", "privacy", "infrastructure", "marketplace"],
+    "repository": "https://github.com/subrosa-escrow/subrosa-escrow",
+    "homepage": "https://subrosa-escrow.vercel.app",
+    "license": "Apache-2.0",
+    "maintainers": [
+      {
+        "handle": "subrosa-core",
+        "role": "protocol-architect",
+        "contact": "security@subrosa.example"
+      }
+    ]
+  },
+
+  "funding": {
+    "drips": {
+      "dripListId": null,
+      "contracts": {
+        "dripList": null
+      }
+    },
+    "github": ["https://github.com/sponsors/subrosa-escrow"],
+    "requested": {
+      "currency": "USD",
+      "amount": 150000,
+      "purpose": "Independent audit of the Soroban escrow contract, a decentralised drand relayer quorum, and a production deployment on Stellar mainnet."
+    }
+  },
+
+  "protocol": {
+    "name": "SubRosa Escrow v1",
+    "chain": {
+      "family": "stellar",
+      "ledger_type": "soroban",
+      "native_token": "XLM",
+      "settlement_token": "USDC (Circle SAC)"
+    },
+
+    "privacy_model": {
+      "mechanism": "drand tlock (timelock encryption, age X25519 + ChaCha20-Poly1305)",
+      "summary": "A bid plaintext is encrypted to a future drand round before it leaves the bidder's browser. The decryption key is the threshold-BLS signature the League of Entropy publishes for that round, so the ciphertext is information-theoretically opaque to every party — bidder, relayer, contract, and validator — until that round is live. Because the key becomes public to everyone at the same instant, no single party can withhold or precede a reveal.",
+      "properties": [
+        "No plaintext bid is ever transmitted to or stored by the backend.",
+        "No trusted revealer: any party can decrypt and reveal once the round is live.",
+        "No bidder-reveal griefing: a sealed bid is binding because it is revealable by anyone, not only its author.",
+        "Front-running resistant: the commitment is salted and bound to the auction id, so an opening cannot be replayed into another auction. The bidder's address is deliberately excluded from the preimage — a bid is filed under the address that signed the seal and revealed under that same stored address, so a third party who learns an opening can only ever credit the real bidder."
+      ],
+      "beacon": {
+        "network": "quicknet",
+        "chain_hash": "52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971",
+        "public_key": "83cf0f2896adee7eb8b5f01fcad3912212c437e0073e911fb90022d3e760183c8c4b450b6a0a6c3ac6a5776a2d1064510d1fec758c921cc22b0e17e63aaf4bcb5ed66304de9cf809bd274ca73bab4af5a6e9c76a4bc09e76eae8991ef5ece45a",
+        "group_hash": "f477d5c89f21a17c863a7f937c6a6d15859414d2be09cd448d4279af331c5d3e",
+        "scheme_id": "bls-unchained-g1-rfc9380",
+        "period_seconds": 3,
+        "genesis_time": 1692803367,
+        "api": "https://api.drand.sh/52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971/",
+        "verification_witness": "The Soroban contract cannot evaluate a BN254 pairing, so it does not verify the BLS signature itself. Instead a registered relayer quorum produces an M-of-N ed25519 attestation over sha256(domain || chain_hash || round || randomness || auction_id). Beacon authenticity is therefore trust-minimised rather than trustless: any observer can independently re-verify the BLS signature with `npm run drand:verify -- --round <n>`. A future revision replaces the quorum with an on-chain pairing precompile or a light-client bridge.",
+        "relayer_quorum": {
+          "scheme": "m-of-n ed25519 over a canonical digest",
+          "recommended_m": 2,
+          "recommended_n": 3,
+          "slash_condition": "A relayer that signs a digest for a round whose beacon was not published, or for a randomness value that fails BLS verification, is removable by admin and forfeits its bond."
+        }
+      }
+    },
+
+    "lifecycle": [
+      { "state": "Sealed", "description": "SEQUENCE <= commit_deadline. Bidders submit a commitment and a flat bond. The sealed envelope stays off-chain; only sha256(envelope) and the commitment are on-chain. The seller may cancel, but only here and only paying for it." },
+      { "state": "Reveal", "description": "commit_deadline < SEQUENCE <= reveal_deadline. Once the reveal-round beacon is live and attested, anyone reveals (bidder, relayer, or a third party) by supplying the envelope and its opening." },
+      { "state": "Funding", "description": "reveal_deadline < SEQUENCE <= funding_deadline. The provisional winner tops up escrow to the full hammer price. Reveal and fund are both still accepted in this window, so a slow reveal is not a lost bid." },
+      { "state": "Settled", "description": "Reachable only after funding_deadline, and permissionless: the highest fully-escrowed revealed bid wins. Escrow releases to the seller net of the protocol fee; slashed bonds go to the seller; losing bids are refunded by pull payment in `claim`, where each refund is derived from the claimant's own bid." },
+      { "state": "Cancelled", "description": "Seller cancelled while Sealed. With no sealed bids the seller bond is returned; with bids it is liquidated and split equally between them as `cancel_compensation`. Sealed bidders reclaim their bond through `claim`." },
+      { "state": "Failed", "description": "Reveal and funding closed without a single fully-escrowed bid at or above the reserve. Every funded bid is refundable; slashed bonds still go to the seller." }
+    ],
+
+    "invariants": [
+      "SUM(escrowed) >= SUM(bonds not yet withdrawn) + SUM(proceeds not yet withdrawn) at every ledger.",
+      "A bid can only be revealed if sha256(envelope) equals the envelope hash anchored at seal time, AND the opening hashes to the anchored commitment.",
+      "A bid can only be revealed if the reveal-round beacon has already been attested on-chain for this auction, so the quorum check happens once per auction and never per bid.",
+      "The reveal round is derived at creation as round_at(now + commit_window * assumed_ledger_seconds) + margin_rounds, so the beacon provably cannot exist while sealed bids are still being accepted.",
+      "Only a bid whose `funded` is at least its `revealed_amount` can set the hammer price, so an under-funded reveal cannot win and instead has its bond slashed.",
+      "Phase is recomputed from the ledger on every call and terminal states are sticky, so a stalled relayer cannot strand an auction in a non-terminal phase.",
+      "No write is possible while `paused`."
+    ],
+
+    "deployments": [
+      {
+        "network": "testnet",
+        "network_passphrase": "Test SDF Network ; September 2015",
+        "rpc_url": "https://soroban-testnet.stellar.org",
+        "horizon_url": "https://horizon-testnet.stellar.org",
+        "contracts": {
+          "subrosa_escrow": null,
+          "settlement_token": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "settlement_token_label": "native XLM Soroban Asset Contract (chosen so end-to-end runs need no trustlines; set SUBROSA_SETTLEMENT_TOKEN to CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA for testnet USDC)"
+        },
+        "deployed_at_ledger": null,
+        "deployer": null
+      },
+      {
+        "network": "mainnet",
+        "network_passphrase": "Public Global Stellar Network ; September 2015",
+        "rpc_url": "https://soroban-rpc.mainnet.stellar.gateway.fm",
+        "horizon_url": "https://horizon.stellar.org",
+        "contracts": {
+          "subrosa_escrow": null,
+          "settlement_token": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75",
+          "settlement_token_label": "Circle USDC Soroban Asset Contract, issuer GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN; independently re-derive with Asset('USDC', issuer).contractId(Networks.PUBLIC) before trusting this value"
+        },
+        "deployed_at_ledger": null,
+        "deployer": null
+      }
+    ],
+
+    "artifacts": {
+      "wasm": {
+        "path": "contracts/target/wasm32-unknown-unknown/release/subrosa_escrow.wasm",
+        "sha256": null,
+        "size_bytes": null
+      },
+      "source_commit": null,
+      "toolchain": {
+        "rust": "1.81.0",
+        "soroban_sdk": "22.0.6",
+        "soroban_cli": "22.1.0",
+        "node": "24.20.0",
+        "note": "engines requires Node >= 22.7.0: the backend runs TypeScript directly via --experimental-transform-types, which landed in 22.7.0."
+      }
+    },
+
+    "api": {
+      "base_url_production": "https://api.subrosa-escrow.dev",
+      "note": "There is deliberately no endpoint that accepts a bid amount. The browser computes the commitment and the ciphertext locally; the only bid-shaped payload the API accepts is a hash and an age ciphertext it cannot read. See README.md -> API.",
+      "endpoints": [
+        "GET  /healthz",
+        "GET  /v1/config",
+        "GET  /v1/drand/info",
+        "GET  /v1/auctions",
+        "GET  /v1/auctions/:id",
+        "GET  /v1/auctions/:id/bids",
+        "GET  /v1/auctions/:id/activity",
+        "POST /v1/auctions/:id/envelopes",
+        "GET  /v1/auctions/:id/envelopes",
+        "GET  /v1/auctions/:id/envelopes/:bidder",
+        "GET  /v1/auctions/:id/attestation",
+        "POST /v1/tx/prepare",
+        "POST /v1/tx/submit",
+        "POST /v1/admin/observe",
+        "POST /v1/admin/advance/:id",
+        "POST /v1/admin/selfcheck"
+      ]
+    }
+  },
+
+  "validation": {
+    "one_command": "make -C contracts test && npm test && npm run test --workspace frontend && npm run typecheck",
+    "offline": true,
+    "steps": [
+      {
+        "id": "contract-tests",
+        "command": "make -C contracts test",
+        "proves": "Escrow conservation, commitment binding, phase deadlines, bond slashing, fee accounting, and the M-of-N attestation check. Requires the Rust toolchain."
+      },
+      {
+        "id": "encoding-parity",
+        "command": "npm test && npm run test --workspace frontend",
+        "proves": "The Rust contract, the Node relayer and the browser all encode the bid commitment and the beacon digest to the same bytes. Every side asserts the same fixture, so a drift between the three implementations fails in CI rather than at a reveal."
+      },
+      {
+        "id": "typecheck",
+        "command": "npm run typecheck",
+        "proves": "Backend and frontend both compile under strict TypeScript with no unchecked index access."
+      },
+      {
+        "id": "frontend-build",
+        "command": "npm run build --workspace frontend",
+        "proves": "The Next.js app builds, including the browser crypto path: tlock-js is resolved and Buffer is provided without pulling the stack into the server bundle."
+      },
+      {
+        "id": "timelock-round-trip",
+        "command": "npm run drand:selftest --workspace backend",
+        "proves": "A sealed envelope is undecryptable before its round and decrypts to the exact original plaintext after it, against live quicknet. Requires network access."
+      },
+      {
+        "id": "beacon-verification",
+        "command": "npm run drand:verify --workspace backend -- --round <n>",
+        "proves": "The BLS signature on a round is valid for the pinned quicknet public key, independently of any SubRosa infrastructure."
+      },
+      {
+        "id": "end-to-end",
+        "command": "npm run e2e --workspace backend",
+        "proves": "Seal -> reveal -> fund -> settle against a live testnet deployment with a real drand round window. Requires a deployed contract and funded keys."
+      }
+    ],
+    "golden_vectors": "backend/src/__tests__/fixtures/golden-vectors.json",
+    "golden_vectors_consumers": [
+      "contracts/subrosa_escrow/src/test.rs (golden_* tests)",
+      "backend/src/__tests__/commitment.test.ts",
+      "backend/src/__tests__/attestation.test.ts",
+      "frontend/lib/__tests__/commitment.test.ts"
+    ]
+  },
+
+  "security": {
+    "contact": "security@subrosa.example",
+    "audits": [],
+    "known_limitations": [
+      "Beacon authenticity on-chain relies on an M-of-N relayer quorum because Soroban exposes no BN254 pairing host function; this is a trust assumption, not a trustless proof. It cannot be used to decrypt anything early — a fabricated beacon does not produce a future round's key — so the failure mode is a disputed outcome, not a privacy break.",
+      "Sealed envelopes are stored off-chain in the reference bulletin board. Their integrity is anchored on-chain by sha256(envelope), reveal is permissionless, and the bidder keeps a copy of their own opening, so the loss of the bulletin degrades availability but not correctness. The contract itself holds no ciphertext.",
+      "Sealed bid count per auction is capped by `Config::max_bids` (hard cap 64) because settlement performs one bounded read pass over revealed bids. Raising the cap requires maintaining the leading bid incrementally, which v1 deliberately does not do.",
+      "Auction deadlines are ledger sequences while sealing safety is enforced by the drand round. The two are bridged by `Config::assumed_ledger_seconds`, which is an estimate: an inaccurate value moves the reveal round, never the safety property that no beacon exists during the sealing window.",
+      "Revealed amounts are public chain state. They become visible only after the commit deadline, when they can no longer influence another bidder's decision."
+    ]
+  }
+}
