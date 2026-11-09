@@ -224,8 +224,9 @@ state. Full request/response examples: [`docs/API.md`](./docs/API.md).
 | `GET`  | `/v1/auctions`                       | Newest auctions from the chain, falling back to the cache for old pages.                                         |
 | `GET`  | `/v1/auctions/:id`                   | Auction, timing, windows, attestation, envelope count, and — with `?claimant=` — the caller's claimable balance. |
 | `GET`  | `/v1/auctions/:id/bids`              | Commitments, bonds, escrowed totals, reveal state.                                                               |
-| `GET`  | `/v1/auctions/:id/activity`          | Submissions and queued jobs, for operating the thing.                                                            || `POST` | `/v1/auctions/:id/envelopes` | Publish a sealed ciphertext. Accepts a hash and an envelope, never an amount. |
-| `GET` | `/v1/auctions/:id/envelopes` | Every stored ciphertext for an auction. Unreadable until the reveal round. |
+| `GET`  | `/v1/auctions/:id/activity`          | Submissions and queued jobs, for operating the thing.                                                            |
+| `POST` | `/v1/auctions/:id/envelopes`         | Publish a sealed ciphertext. Accepts a hash and an envelope, never an amount.                                    |
+| `GET`  | `/v1/auctions/:id/envelopes`         | Every stored ciphertext for an auction. Unreadable until the reveal round.                                       |
 | `GET`  | `/v1/auctions/:id/envelopes/:bidder` | One bidder's ciphertext, used by the reveal flow.                                                                |
 | `GET`  | `/v1/auctions/:id/attestation`       | The beacon attestation, its round, and its signer set.                                                           |
 | `POST` | `/v1/tx/prepare`                     | Build an unsigned invoke transaction. Bodies carry hashes, not amounts.                                          |
@@ -333,16 +334,16 @@ authoritative and none of them is softened here.
 
 ## Documentation
 
-| Document | What it covers |
-| --- | --- |
-| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Design record: byte layouts, lifecycle, economics, trust boundaries. |
-| [`SECURITY.md`](./SECURITY.md) | Guarantees, assumptions, known limitations, safe deployment. |
-| [`docs/API.md`](./docs/API.md) | Every route with request and response examples. |
-| [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) | Key ceremony, contract deploy, relayer rollout, incidents. |
-| [`docs/GLOSSARY.md`](./docs/GLOSSARY.md) | drand, quicknet, tlock, commitment, envelope, attestation, quorum, phases. |
-| [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) | Failure modes and what each one means. |
+| Document                                                             | What it covers                                                                 |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md)                               | Design record: byte layouts, lifecycle, economics, trust boundaries.           |
+| [`SECURITY.md`](./SECURITY.md)                                       | Guarantees, assumptions, known limitations, safe deployment.                   |
+| [`docs/API.md`](./docs/API.md)                                       | Every route with request and response examples.                                |
+| [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md)                         | Key ceremony, contract deploy, relayer rollout, incidents.                     |
+| [`docs/GLOSSARY.md`](./docs/GLOSSARY.md)                             | drand, quicknet, tlock, commitment, envelope, attestation, quorum, phases.     |
+| [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)               | Failure modes and what each one means.                                         |
 | [`docs/CONTRIBUTING-DEEP-DIVE.md`](./docs/CONTRIBUTING-DEEP-DIVE.md) | Codebase map and recipes for adding an endpoint, a component, a contract test. |
-| [`CHANGELOG.md`](./CHANGELOG.md) | Notable changes, Keep a Changelog format. |
+| [`CHANGELOG.md`](./CHANGELOG.md)                                     | Notable changes, Keep a Changelog format.                                      |
 
 ## License
 
