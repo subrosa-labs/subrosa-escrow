@@ -10,7 +10,7 @@ repository = "https://github.com/subrosa-escrow/subrosa-escrow"
 authors = ["SubRosa Core <security@subrosa.example>"]
 
 [workspace.dependencies]
-soroban-sdk = "22.0.6"
+soroban-sdk = "29.0.1"
 soroban-sdk-testutils = "22.0.6"
 
 [profile.release]
