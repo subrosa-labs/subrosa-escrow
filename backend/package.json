@@ -9,7 +9,7 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node -e \"require('node:fs').mkdirSync('dist/store',{recursive:true});require('node:fs').copyFileSync('src/store/schema.sql','dist/store/schema.sql')\"",
     "start": "node dist/index.js",
     "dev": "node --watch --experimental-transform-types --no-warnings=ExperimentalWarning src/index.ts",
     "worker": "node --experimental-transform-types --no-warnings=ExperimentalWarning src/worker-main.ts",
