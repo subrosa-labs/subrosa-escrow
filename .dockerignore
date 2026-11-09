@@ -1,0 +1,14 @@
+node_modules/
+**/node_modules/
+backend/dist/
+frontend/.next/
+frontend/out/
+contracts/target/
+.git/
+.github/
+.tmp/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
