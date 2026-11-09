@@ -23,9 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 py-6">
             <header className="flex flex-wrap items-center justify-between gap-4 border-b border-ink-700 pb-4">
               <Link href="/" className="flex items-baseline gap-2 no-underline">
-                <span className="text-lg font-semibold tracking-tight text-ash-100">
-                  SubRosa
-                </span>
+                <span className="text-lg font-semibold tracking-tight text-ash-100">SubRosa</span>
                 <span className="text-xs uppercase tracking-[0.2em] text-ash-400">escrow</span>
               </Link>
 

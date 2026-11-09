@@ -45,7 +45,9 @@ interface Vectors {
 
 const vectors: Vectors = JSON.parse(
   readFileSync(
-    fileURLToPath(new URL('../../../backend/src/__tests__/fixtures/golden-vectors.json', import.meta.url)),
+    fileURLToPath(
+      new URL('../../../backend/src/__tests__/fixtures/golden-vectors.json', import.meta.url),
+    ),
     'utf8',
   ),
 ) as Vectors;
@@ -59,7 +61,9 @@ async function assertVector(vector: BidVector, label: string): Promise<void> {
 
   expect(bytesToHex(bidPreimage(input)), `${label}: preimage`).toBe(vector.preimageHex);
   expect(bidPreimage(input).length, `${label}: preimage length`).toBe(BID_PREIMAGE_LEN);
-  expect(bytesToHex(await computeCommitment(input)), `${label}: commitment`).toBe(vector.commitment);
+  expect(bytesToHex(await computeCommitment(input)), `${label}: commitment`).toBe(
+    vector.commitment,
+  );
 }
 
 describe('bid commitment', () => {

@@ -54,18 +54,12 @@ describe('isRetryable', () => {
   });
 
   it('retries a premature call', () => {
-    expect(
-      isRetryable(new SubmissionError('too early', { contractErrorCode: 32 })),
-    ).toBe(true);
+    expect(isRetryable(new SubmissionError('too early', { contractErrorCode: 32 }))).toBe(true);
   });
 
   it('does not retry a deterministic protocol failure', () => {
-    expect(
-      isRetryable(new SubmissionError('bad opening', { contractErrorCode: 13 })),
-    ).toBe(false);
-    expect(
-      isRetryable(new SubmissionError('bad quorum', { contractErrorCode: 18 })),
-    ).toBe(false);
+    expect(isRetryable(new SubmissionError('bad opening', { contractErrorCode: 13 }))).toBe(false);
+    expect(isRetryable(new SubmissionError('bad quorum', { contractErrorCode: 18 }))).toBe(false);
   });
 
   it('does not retry things that are not submission errors', () => {

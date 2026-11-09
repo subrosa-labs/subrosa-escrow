@@ -58,15 +58,11 @@ describe('round arithmetic', () => {
       1_800_000_000,
       Date.now() / 1000,
     ]) {
-      expect(roundAt(seconds, QUICKNET)).toBe(
-        drandParity.roundAt(seconds * 1_000, QUICKNET_INFO),
-      );
+      expect(roundAt(seconds, QUICKNET)).toBe(drandParity.roundAt(seconds * 1_000, QUICKNET_INFO));
     }
 
     for (const round of [1, 2, 500, 32_000_000]) {
-      expect(roundTime(round, QUICKNET) * 1_000).toBe(
-        drandParity.roundTime(QUICKNET_INFO, round),
-      );
+      expect(roundTime(round, QUICKNET) * 1_000).toBe(drandParity.roundTime(QUICKNET_INFO, round));
     }
   });
 
@@ -104,7 +100,9 @@ describe('reveal round prediction', () => {
 
     const estimatedCommitClose = createdAt + commitWindowLedgers * assumedLedgerSeconds;
     expect(predicted).toBe(
-      Math.floor((estimatedCommitClose - QUICKNET.genesisTime) / QUICKNET.periodSeconds) + 1 + marginRounds,
+      Math.floor((estimatedCommitClose - QUICKNET.genesisTime) / QUICKNET.periodSeconds) +
+        1 +
+        marginRounds,
     );
   });
 

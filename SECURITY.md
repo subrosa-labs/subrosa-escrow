@@ -28,12 +28,14 @@ anything that could move funds or break bid privacy. We will acknowledge within 
 ## What the protocol assumes
 
 ### The drand threshold assumption
+
 Bid privacy rests on the League of Entropy: that no threshold of nodes colludes to sign a round
 before it is due. This is the same assumption drand's other users make, and it is the reason
-timelock encryption is preferable here to a trusted operator — but it *is* an external
+timelock encryption is preferable here to a trusted operator — but it _is_ an external
 dependency, not a proof.
 
 ### The on-chain beacon quorum
+
 Soroban exposes no BN254 pairing host function, so the contract cannot verify drand's BLS
 signature itself. Instead, registered relayers each verify the signature off-chain and sign an
 ed25519 digest binding `(chain_hash, round, randomness, auction_id)`; the contract checks an
@@ -47,16 +49,17 @@ and `npm run drand:verify`, which lets anyone re-verify a round without trusting
 infrastructure.
 
 ### Availability is not a security property
+
 The relayer, the bulletin board, and the database are all replaceable:
 
-| If this fails | Then |
-| --- | --- |
+| If this fails                                   | Then                                                                                                                                                           |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The relayer is offline during the reveal window | Anyone can reveal. The bidder can always reveal from the backup they saved, which needs no network access to drand at all — the contract only compares hashes. |
-| The bulletin loses an envelope | Same: the bidder's own copy is the fallback. |
-| The relayer is offline for settlement | `settle` is permissionless, and the UI offers it to any connected wallet. |
-| The database is lost | The chain is unaffected. Only convenience data disappears. |
+| The bulletin loses an envelope                  | Same: the bidder's own copy is the fallback.                                                                                                                   |
+| The relayer is offline for settlement           | `settle` is permissionless, and the UI offers it to any connected wallet.                                                                                      |
+| The database is lost                            | The chain is unaffected. Only convenience data disappears.                                                                                                     |
 
-The relayer can make an auction *slow*. It cannot make it unreadable, unsettleable, or
+The relayer can make an auction _slow_. It cannot make it unreadable, unsettleable, or
 un-refundable.
 
 ---
@@ -88,13 +91,13 @@ un-refundable.
 The operational half of this document is [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md). The
 security-relevant requirements, in short:
 
-* **One relayer key per operator.** Holding ≥ threshold keys in one place collapses the quorum
+- **One relayer key per operator.** Holding ≥ threshold keys in one place collapses the quorum
   into a single trusted party. The backend refuses to start this way in production.
-* **`ADMIN_TOKEN` unset in public deployments**, or set to a long random value. Those routes can
+- **`ADMIN_TOKEN` unset in public deployments**, or set to a long random value. Those routes can
   drive settlement.
-* **`CORS_ORIGINS` set to exact origins**, not `*`.
-* **`NODE_ENV=production`**, which also enables the single-key enforcement.
-* **Re-derive the settlement token address yourself** rather than trusting the value in
+- **`CORS_ORIGINS` set to exact origins**, not `*`.
+- **`NODE_ENV=production`**, which also enables the single-key enforcement.
+- **Re-derive the settlement token address yourself** rather than trusting the value in
   `FUNDING.json`, which exists to be checked.
 
 ## Verifying a deployment

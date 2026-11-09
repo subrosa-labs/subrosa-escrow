@@ -224,10 +224,14 @@ export function phaseCopy(phase: Phase): { label: string; blurb: string } {
     case 'Funding':
       return {
         label: 'Funding',
-        blurb: 'The provisional winner is escrowing the full amount. Under-funded bids lose their bond.',
+        blurb:
+          'The provisional winner is escrowing the full amount. Under-funded bids lose their bond.',
       };
     case 'Settled':
-      return { label: 'Settled', blurb: 'Escrow released to the seller. Losing bids are refundable.' };
+      return {
+        label: 'Settled',
+        blurb: 'Escrow released to the seller. Losing bids are refundable.',
+      };
     case 'Cancelled':
       return { label: 'Cancelled', blurb: 'Bids never became binding. Bonds are refundable.' };
     case 'Failed':

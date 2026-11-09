@@ -26,8 +26,7 @@ export const QUICKNET: DrandChain = {
   schemeId: 'bls-unchained-g1-rfc9380',
   periodSeconds: 3,
   genesisTime: 1_692_803_367,
-  baseUrl:
-    'https://api.drand.sh/52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971',
+  baseUrl: 'https://api.drand.sh/52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971',
 };
 
 /** First round published at or after `timestampSeconds`. Mirrors `SubRosaEscrow::round_at`. */
@@ -42,11 +41,19 @@ export function roundTime(round: number, chain: DrandChain = QUICKNET): number {
   return chain.genesisTime + (round - 1) * chain.periodSeconds;
 }
 
-export function isRoundPublished(round: number, chain: DrandChain = QUICKNET, nowMs = Date.now()): boolean {
+export function isRoundPublished(
+  round: number,
+  chain: DrandChain = QUICKNET,
+  nowMs = Date.now(),
+): boolean {
   return nowMs / 1000 >= roundTime(round, chain);
 }
 
-export function msUntilRound(round: number, chain: DrandChain = QUICKNET, nowMs = Date.now()): number {
+export function msUntilRound(
+  round: number,
+  chain: DrandChain = QUICKNET,
+  nowMs = Date.now(),
+): number {
   return Math.max(0, roundTime(round, chain) * 1000 - nowMs);
 }
 

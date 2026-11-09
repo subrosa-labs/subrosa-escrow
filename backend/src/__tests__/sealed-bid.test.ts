@@ -83,7 +83,9 @@ describe('decodeSealedBid', () => {
   it('rejects a wrong version', () => {
     const encoded = encodeSealedBid(sampleBid());
     const mutated = Buffer.from(encoded).toString('utf8').replace('"v":1', '"v":2');
-    expect(() => decodeSealedBid(new Uint8Array(Buffer.from(mutated)))).toThrow(/failed validation/);
+    expect(() => decodeSealedBid(new Uint8Array(Buffer.from(mutated)))).toThrow(
+      /failed validation/,
+    );
   });
 
   it('rejects a short salt', () => {
@@ -93,9 +95,9 @@ describe('decodeSealedBid', () => {
   });
 
   it('rejects a non-numeric amount', () => {
-    expect(() =>
-      decodeSealedBid(encodeSealedBid(sampleBid({ amount: '1.5e6' }))),
-    ).toThrow(/amount must be a non-negative decimal integer string/);
+    expect(() => decodeSealedBid(encodeSealedBid(sampleBid({ amount: '1.5e6' })))).toThrow(
+      /amount must be a non-negative decimal integer string/,
+    );
   });
 
   it('lists every problem at once', () => {
@@ -116,7 +118,8 @@ describe('decodeSealedBid', () => {
 
 describe('assertRoundIsFuture', () => {
   it('accepts a round that has not been published yet', () => {
-    const round = Math.floor((Date.now() - QUICKNET.genesisTime) / 1_000 / QUICKNET.periodSeconds) + 50;
+    const round =
+      Math.floor((Date.now() - QUICKNET.genesisTime) / 1_000 / QUICKNET.periodSeconds) + 50;
     expect(() => assertRoundIsFuture(round, QUICKNET)).not.toThrow();
   });
 

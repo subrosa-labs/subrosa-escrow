@@ -46,7 +46,10 @@ async function main(): Promise<void> {
 
   const report = (label: string, value: unknown): void => {
     steps[label] = value;
-    if (!options.json) console.log(`  ${label}: ${typeof value === 'object' ? JSON.stringify(value) : String(value)}`);
+    if (!options.json)
+      console.log(
+        `  ${label}: ${typeof value === 'object' ? JSON.stringify(value) : String(value)}`,
+      );
   };
 
   if (!options.json) {
@@ -96,7 +99,8 @@ async function main(): Promise<void> {
 
   // -- 3. Wait for the real round -----------------------------------------
   const waitMs = msUntilRound(targetRound, chain);
-  if (!options.json) console.log(`  waiting ${Math.ceil(waitMs / 1000)}s for round ${targetRound}…`);
+  if (!options.json)
+    console.log(`  waiting ${Math.ceil(waitMs / 1000)}s for round ${targetRound}…`);
   while (Date.now() < roundTime(targetRound, chain) * 1000) {
     await new Promise((resolve) => setTimeout(resolve, 500));
   }

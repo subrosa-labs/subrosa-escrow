@@ -118,7 +118,12 @@ export class MemoryStore implements Store {
       if (claimed.length >= limit) break;
 
       if (job.status === 'leased' && job.leaseUntil !== null && Date.parse(job.leaseUntil) < now) {
-        this.jobs.set(key, { ...job, status: 'pending', leaseUntil: null, updatedAt: new Date().toISOString() });
+        this.jobs.set(key, {
+          ...job,
+          status: 'pending',
+          leaseUntil: null,
+          updatedAt: new Date().toISOString(),
+        });
       }
 
       const current = this.jobs.get(key);

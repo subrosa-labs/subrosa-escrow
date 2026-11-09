@@ -233,7 +233,10 @@ export class PostgresStore implements Store {
   }
 
   async completeJob(id: string): Promise<void> {
-    await this.query("UPDATE jobs SET status = 'done', lease_until = NULL, updated_at = now() WHERE id = $1", [id]);
+    await this.query(
+      "UPDATE jobs SET status = 'done', lease_until = NULL, updated_at = now() WHERE id = $1",
+      [id],
+    );
   }
 
   async failJob(id: string, error: string, options?: { retryAfterMs?: number }): Promise<void> {
@@ -258,9 +261,10 @@ export class PostgresStore implements Store {
   }
 
   async listJobs(auctionId: string): Promise<JobRecord[]> {
-    const rows = await this.query<JobRow>('SELECT * FROM jobs WHERE auction_id = $1 ORDER BY kind', [
-      auctionId,
-    ]);
+    const rows = await this.query<JobRow>(
+      'SELECT * FROM jobs WHERE auction_id = $1 ORDER BY kind',
+      [auctionId],
+    );
     return rows.map(mapJob);
   }
 
@@ -360,10 +364,10 @@ export class PostgresStore implements Store {
       ledger: string | null;
       error: string | null;
       created_at: Date;
-    }>(
-      `SELECT * FROM submissions WHERE auction_id = $1 ORDER BY created_at DESC LIMIT $2`,
-      [auctionId, limit],
-    );
+    }>(`SELECT * FROM submissions WHERE auction_id = $1 ORDER BY created_at DESC LIMIT $2`, [
+      auctionId,
+      limit,
+    ]);
     return rows.map((row) => ({
       id: row.id,
       auctionId: row.auction_id,

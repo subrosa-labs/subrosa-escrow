@@ -32,7 +32,11 @@ async function main(): Promise<void> {
   process.on('SIGTERM', () => void shutdown('SIGTERM'));
 
   app.log.info(
-    { network: app.network.name, contract: app.config.SUBROSA_CONTRACT_ID, chain: app.chain.beaconId },
+    {
+      network: app.network.name,
+      contract: app.config.SUBROSA_CONTRACT_ID,
+      chain: app.chain.beaconId,
+    },
     'subrosa worker started',
   );
 }

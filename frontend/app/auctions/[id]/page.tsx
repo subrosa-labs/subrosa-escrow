@@ -2,8 +2,18 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { api, ApiError } from '../../../lib/api.ts';
 import { beaconUrl, roundTime, QUICKNET } from '../../../lib/drand.ts';
-import { formatAmount, formatTimestamp, SETTLEMENT_SYMBOL, shortenAddress } from '../../../lib/format.ts';
-import { windowsOf, type AuctionDetailDto, type BidDto, type ConfigDto } from '../../../lib/types.ts';
+import {
+  formatAmount,
+  formatTimestamp,
+  SETTLEMENT_SYMBOL,
+  shortenAddress,
+} from '../../../lib/format.ts';
+import {
+  windowsOf,
+  type AuctionDetailDto,
+  type BidDto,
+  type ConfigDto,
+} from '../../../lib/types.ts';
 import { AuctionActions } from '../../../components/AuctionActions.tsx';
 import { Countdown } from '../../../components/Countdown.tsx';
 import { PhaseBadge } from '../../../components/PhaseBadge.tsx';
@@ -113,7 +123,9 @@ export default async function AuctionPage({ params }: { params: { id: string } }
               />
               <Stat
                 label="Hammer price"
-                value={formatAmount(auction.hammerPrice, decimals, { withSymbol: SETTLEMENT_SYMBOL })}
+                value={formatAmount(auction.hammerPrice, decimals, {
+                  withSymbol: SETTLEMENT_SYMBOL,
+                })}
               />
               <Stat
                 label="Claimed out"
@@ -128,7 +140,9 @@ export default async function AuctionPage({ params }: { params: { id: string } }
           <Notice tone="warn" title="The seller cancelled after bids were sealed">
             The seller bond was liquidated and split between the sealed bidders:{' '}
             <span className="font-mono">
-              {formatAmount(auction.cancelCompensation, decimals, { withSymbol: SETTLEMENT_SYMBOL })}
+              {formatAmount(auction.cancelCompensation, decimals, {
+                withSymbol: SETTLEMENT_SYMBOL,
+              })}
             </span>{' '}
             each. That is the only thing that makes cancelling a credible commitment rather than an
             option.
@@ -174,8 +188,8 @@ export default async function AuctionPage({ params }: { params: { id: string } }
             {attestation === null ? (
               <p className="text-sm text-ash-400">
                 No attestation on record yet. The relayer BLS-verifies round{' '}
-                <span className="font-mono">{auction.revealRound}</span> against quicknet&rsquo;s pinned
-                public key, then has the quorum sign a digest binding{' '}
+                <span className="font-mono">{auction.revealRound}</span> against quicknet&rsquo;s
+                pinned public key, then has the quorum sign a digest binding{' '}
                 <span className="font-mono">(chain, round, randomness, auction)</span>.
               </p>
             ) : (
@@ -321,8 +335,9 @@ function Windows({
 
       {phase === 'Funding' && !summary.settlement ? (
         <p className="text-xs text-ash-400">
-          The phase has moved to funding but the window has not closed: <span className="font-mono">reveal_bid</span>{' '}
-          and <span className="font-mono">fund_bid</span> are both still accepted until the funding
+          The phase has moved to funding but the window has not closed:{' '}
+          <span className="font-mono">reveal_bid</span> and{' '}
+          <span className="font-mono">fund_bid</span> are both still accepted until the funding
           deadline. A stalled relayer cannot strand an auction, because the phase is recomputed from
           the ledger on every call rather than trusted from storage.
         </p>
@@ -389,11 +404,13 @@ function BidTable({
               <td className="py-2 pr-3 text-ash-200" title={bid.bidder}>
                 {shortenAddress(bid.bidder)}
               </td>
+              <td className="py-2 pr-3 text-ash-300">{formatAmount(bid.bond, decimals)}</td>
               <td className="py-2 pr-3 text-ash-300">
-                {formatAmount(bid.bond, decimals)}
-              </td>
-              <td className="py-2 pr-3 text-ash-300">
-                {bid.revealed ? formatAmount(bid.revealedAmount, decimals) : sealing ? 'sealed' : '—'}
+                {bid.revealed
+                  ? formatAmount(bid.revealedAmount, decimals)
+                  : sealing
+                    ? 'sealed'
+                    : '—'}
               </td>
               <td className="py-2 pr-3 text-ash-300">{formatAmount(bid.funded, decimals)}</td>
               <td className="py-2">

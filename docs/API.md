@@ -23,22 +23,22 @@ Every failure uses the same shape:
 }
 ```
 
-| `error` | Status | Meaning |
-| --- | --- | --- |
-| `invalid_request` | 400 | Schema validation failed. `issues` lists each field. |
-| `auction_not_found` | 404 | No such auction, or no such envelope. |
-| `envelope_not_found` | 404 | No envelope for that bidder on that auction. |
-| `attestation_not_found` | 404 | The reveal round's beacon has not been attested yet. |
-| `bulletin_rejected` | 4xx | The envelope was refused (size, hash mismatch, auction closed, cap reached). |
-| `chain_error` | 502 | The contract rejected the call. `contractErrorCode` and `contractErrorName` carry the contract's own reason, e.g. `CommitmentMismatch` or `InvalidPhase`. |
-| `chain_read_failed` | 502 | The simulation failed for a read. |
-| `relayer_unavailable` | 503 | The orchestrator could not act — usually a missing key or an unreachable contract. |
-| `sponsorship_unavailable` | 409 | `sponsor: true` was requested but no fee source is configured. |
-| `unauthorized` | 401 | Missing or wrong `Authorization` on an admin route. |
-| `internal_error` | 500 | A bug. |
+| `error`                   | Status | Meaning                                                                                                                                                   |
+| ------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `invalid_request`         | 400    | Schema validation failed. `issues` lists each field.                                                                                                      |
+| `auction_not_found`       | 404    | No such auction, or no such envelope.                                                                                                                     |
+| `envelope_not_found`      | 404    | No envelope for that bidder on that auction.                                                                                                              |
+| `attestation_not_found`   | 404    | The reveal round's beacon has not been attested yet.                                                                                                      |
+| `bulletin_rejected`       | 4xx    | The envelope was refused (size, hash mismatch, auction closed, cap reached).                                                                              |
+| `chain_error`             | 502    | The contract rejected the call. `contractErrorCode` and `contractErrorName` carry the contract's own reason, e.g. `CommitmentMismatch` or `InvalidPhase`. |
+| `chain_read_failed`       | 502    | The simulation failed for a read.                                                                                                                         |
+| `relayer_unavailable`     | 503    | The orchestrator could not act — usually a missing key or an unreachable contract.                                                                        |
+| `sponsorship_unavailable` | 409    | `sponsor: true` was requested but no fee source is configured.                                                                                            |
+| `unauthorized`            | 401    | Missing or wrong `Authorization` on an admin route.                                                                                                       |
+| `internal_error`          | 500    | A bug.                                                                                                                                                    |
 
 `chain_error` is the one worth handling: it means the transaction was well-formed and the
-*contract* said no, so the message names a real protocol rule.
+_contract_ said no, so the message names a real protocol rule.
 
 ---
 
@@ -73,12 +73,22 @@ The contract's live configuration:
 
 ```json
 {
-  "admin": "G...", "settlementToken": "C...", "treasury": "G...",
-  "feeBps": 100, "tokenDecimals": 7,
-  "relayerThreshold": 2, "relayerCommitteeSize": 3,
-  "chainHash": "52db9ba7...", "drandGenesis": 1692803367, "drandPeriod": 3,
-  "maxBids": 64, "assumedLedgerSeconds": 5, "marginRounds": 20,
-  "minBond": "1000000", "minRevealLeadLedgers": 20, "paused": false
+  "admin": "G...",
+  "settlementToken": "C...",
+  "treasury": "G...",
+  "feeBps": 100,
+  "tokenDecimals": 7,
+  "relayerThreshold": 2,
+  "relayerCommitteeSize": 3,
+  "chainHash": "52db9ba7...",
+  "drandGenesis": 1692803367,
+  "drandPeriod": 3,
+  "maxBids": 64,
+  "assumedLedgerSeconds": 5,
+  "marginRounds": 20,
+  "minBond": "1000000",
+  "minRevealLeadLedgers": 20,
+  "paused": false
 }
 ```
 
@@ -111,12 +121,30 @@ Round timing is arithmetic, so a client can compute any auction's reveal time lo
 
 ```json
 {
-  "auctions": [ { "id": "7", "seller": "G...", "reservePrice": "10000000", "bond": "1000000",
-                  "sellerBond": "1000000", "commitDeadline": 1234100, "revealDeadline": 1235800,
-                  "fundingDeadline": 1237500, "revealRound": 32000123, "phase": "Sealed",
-                  "sealedCount": 3, "revealedCount": 0, "escrowed": "3000000",
-                  "claimed": "0", "slashed": "0", "cancelCompensation": "0",
-                  "beacon": null, "winner": null, "hammerPrice": "0", "revealed": [] } ],
+  "auctions": [
+    {
+      "id": "7",
+      "seller": "G...",
+      "reservePrice": "10000000",
+      "bond": "1000000",
+      "sellerBond": "1000000",
+      "commitDeadline": 1234100,
+      "revealDeadline": 1235800,
+      "fundingDeadline": 1237500,
+      "revealRound": 32000123,
+      "phase": "Sealed",
+      "sealedCount": 3,
+      "revealedCount": 0,
+      "escrowed": "3000000",
+      "claimed": "0",
+      "slashed": "0",
+      "cancelCompensation": "0",
+      "beacon": null,
+      "winner": null,
+      "hammerPrice": "0",
+      "revealed": []
+    }
+  ],
   "source": "chain"
 }
 ```
@@ -131,8 +159,14 @@ commit deadline.
 {
   "auction": { "...": "as above" },
   "envelopes": 3,
-  "attestation": { "round": 32000123, "randomness": "...", "signers": [0, 2],
-                   "committeeSize": 3, "threshold": 2, "createdAt": "2026-09-15T10:00:00.000Z" },
+  "attestation": {
+    "round": 32000123,
+    "randomness": "...",
+    "signers": [0, 2],
+    "committeeSize": 3,
+    "threshold": 2,
+    "createdAt": "2026-09-15T10:00:00.000Z"
+  },
   "claimable": "0",
   "timing": {
     "now": 1789000000000,
@@ -159,9 +193,17 @@ present when `claimant` is supplied.
 {
   "auctionId": "7",
   "bids": [
-    { "bidder": "G...", "commitment": "<64 hex>", "envelopeHash": "<64 hex>",
-      "bond": "1000000", "funded": "0", "revealed": false, "revealedAmount": "0",
-      "settled": false, "disqualified": false }
+    {
+      "bidder": "G...",
+      "commitment": "<64 hex>",
+      "envelopeHash": "<64 hex>",
+      "bond": "1000000",
+      "funded": "0",
+      "revealed": false,
+      "revealedAmount": "0",
+      "settled": false,
+      "disqualified": false
+    }
   ]
 }
 ```
@@ -177,8 +219,12 @@ why an auction stopped advancing.
 ```json
 {
   "auctionId": "7",
-  "submissions": [ { "method": "attest_beacon", "status": "confirmed", "hash": "...", "ledger": 1234568 } ],
-  "jobs": [ { "kind": "reveal", "status": "pending", "attempts": 0, "runAfter": "...", "lastError": null } ]
+  "submissions": [
+    { "method": "attest_beacon", "status": "confirmed", "hash": "...", "ledger": 1234568 }
+  ],
+  "jobs": [
+    { "kind": "reveal", "status": "pending", "attempts": 0, "runAfter": "...", "lastError": null }
+  ]
 }
 ```
 
@@ -206,7 +252,10 @@ block one either.
 
 ```json
 {
-  "auctionId": "7", "bidder": "G...", "envelopeHash": "<64 hex>", "commitment": "<64 hex>",
+  "auctionId": "7",
+  "bidder": "G...",
+  "envelopeHash": "<64 hex>",
+  "commitment": "<64 hex>",
   "createdAt": "2026-09-15T10:00:00.000Z",
   "revealRound": 32000123,
   "revealRoundPublishesAt": 1789000900000
@@ -238,9 +287,12 @@ now-public beacon.
 
 ```json
 {
-  "auctionId": "7", "round": 32000123, "randomness": "<64 hex>",
-  "committeeSize": 3, "threshold": 2,
-  "signers": [ { "signerIndex": 0, "signature": "<128 hex>" } ],
+  "auctionId": "7",
+  "round": 32000123,
+  "randomness": "<64 hex>",
+  "committeeSize": 3,
+  "threshold": 2,
+  "signers": [{ "signerIndex": 0, "signature": "<128 hex>" }],
   "createdAt": "2026-09-15T10:00:00.000Z",
   "verify": "npm run drand:verify --workspace backend -- --round <round>"
 }
@@ -303,7 +355,9 @@ a stalled relayer cannot strand anyone's funds.
 
 ```json
 {
-  "hash": "abc123...", "ledger": 1234568, "sponsored": true,
+  "hash": "abc123...",
+  "ledger": 1234568,
+  "sponsored": true,
   "returnValueXdr": null,
   "explorerUrl": "https://stellar.expert/explorer/testnet/tx/abc123..."
 }
@@ -318,8 +372,12 @@ If the contract rejects the call the response is `502 chain_error` with the cont
 name, e.g.:
 
 ```json
-{ "error": "chain_error", "message": "commitment does not match the sealed bid",
-  "contractErrorCode": 15, "contractErrorName": "CommitmentMismatch" }
+{
+  "error": "chain_error",
+  "message": "commitment does not match the sealed bid",
+  "contractErrorCode": 15,
+  "contractErrorName": "CommitmentMismatch"
+}
 ```
 
 ---
@@ -329,8 +387,8 @@ name, e.g.:
 Only registered when `ADMIN_TOKEN` is set, and required as `Authorization: Bearer <token>`.
 Leave it unset in a public deployment: these routes can drive settlement.
 
-| Route | Effect |
-| --- | --- |
-| `POST /v1/admin/observe` | Scan live auctions and report which jobs would be scheduled. |
-| `POST /v1/admin/advance/:id` | Run the next queued step for one auction (`attest`, `reveal`, or `settle`, chosen from chain state). |
-| `POST /v1/admin/selfcheck` | Validate that this process's key set can satisfy the on-chain quorum, and show the contract's pinned parameters. |
+| Route                        | Effect                                                                                                           |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `POST /v1/admin/observe`     | Scan live auctions and report which jobs would be scheduled.                                                     |
+| `POST /v1/admin/advance/:id` | Run the next queued step for one auction (`attest`, `reveal`, or `settle`, chosen from chain state).             |
+| `POST /v1/admin/selfcheck`   | Validate that this process's key set can satisfy the on-chain quorum, and show the contract's pinned parameters. |

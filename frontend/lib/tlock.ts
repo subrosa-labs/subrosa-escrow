@@ -83,7 +83,10 @@ async function loadTlock() {
 
 /** sha256 via Web Crypto. */
 async function sha256(bytes: Bytes): Promise<Bytes> {
-  const digest = await crypto.subtle.digest('SHA-256', new Uint8Array(bytes) as unknown as BufferSource);
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new Uint8Array(bytes) as unknown as BufferSource,
+  );
   return new Uint8Array(digest);
 }
 
@@ -217,11 +220,17 @@ export async function openEnvelope(envelope: string, chain: DrandChain): Promise
 
   const salt = hexToBytes32(plaintext.salt, 'salt');
   const amount = BigInt(plaintext.amount);
-  const commitment = await computeCommitment({ auctionId: BigInt(plaintext.auctionId), amount, salt });
+  const commitment = await computeCommitment({
+    auctionId: BigInt(plaintext.auctionId),
+    amount,
+    salt,
+  });
 
   const declared = hexToBytes32(plaintext.commitment, 'commitment');
   if (!bytesEqual(declared, commitment)) {
-    throw new SealError('this envelope does not match its own commitment; do not trust its contents');
+    throw new SealError(
+      'this envelope does not match its own commitment; do not trust its contents',
+    );
   }
 
   return { plaintext, amount, salt, commitment };

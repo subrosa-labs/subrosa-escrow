@@ -33,10 +33,7 @@ function committee(size: number): { keys: Keypair[]; pubkeys: string[] } {
 describe('resolveSigners', () => {
   it('maps each secret to its position in the on-chain set', () => {
     const { keys, pubkeys } = committee(3);
-    const { signers, unmatched } = resolveSigners(
-      [keys[2]!.secret(), keys[0]!.secret()],
-      pubkeys,
-    );
+    const { signers, unmatched } = resolveSigners([keys[2]!.secret(), keys[0]!.secret()], pubkeys);
 
     expect(unmatched).toEqual([]);
     // Input order must not leak into the index; the on-chain order is authoritative.
@@ -85,9 +82,7 @@ describe('signBeaconDigest', () => {
     for (const entry of signatures) {
       expect(entry.signature).toHaveLength(64);
       const signer = signers.find((candidate) => candidate.index === entry.signerIndex)!;
-      expect(
-        signer.keypair.verify(Buffer.from(digest), Buffer.from(entry.signature)),
-      ).toBe(true);
+      expect(signer.keypair.verify(Buffer.from(digest), Buffer.from(entry.signature))).toBe(true);
     }
   });
 
@@ -106,12 +101,9 @@ describe('signBeaconDigest', () => {
     const [forTwo] = signBeaconDigest(signers, { ...base, auctionId: 2n });
 
     const digestOne = computeBeaconDigest(base);
-    expect(
-      signers[0]!.keypair.verify(
-        Buffer.from(digestOne),
-        Buffer.from(forTwo!.signature),
-      ),
-    ).toBe(false);
+    expect(signers[0]!.keypair.verify(Buffer.from(digestOne), Buffer.from(forTwo!.signature))).toBe(
+      false,
+    );
     expect(forOne!.signature).not.toEqual(forTwo!.signature);
   });
 

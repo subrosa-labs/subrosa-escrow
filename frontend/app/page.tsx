@@ -29,11 +29,11 @@ export default async function HomePage() {
           Bids nobody can read, until nobody can change theirs.
         </h1>
         <p className="max-w-2xl text-ash-300">
-          SubRosa is a sealed-bid auction engine on Stellar. A bid is encrypted in the bidder&rsquo;s
-          browser to a future drand round, so the amount provably cannot exist anywhere — not on the
-          ledger, not in our database, not in our memory — until that round&rsquo;s threshold
-          signature is published. Once it is published the key is public to everybody at once,
-          which is what makes revealing compulsory rather than optional.
+          SubRosa is a sealed-bid auction engine on Stellar. A bid is encrypted in the
+          bidder&rsquo;s browser to a future drand round, so the amount provably cannot exist
+          anywhere — not on the ledger, not in our database, not in our memory — until that
+          round&rsquo;s threshold signature is published. Once it is published the key is public to
+          everybody at once, which is what makes revealing compulsory rather than optional.
         </p>
 
         <div className="flex flex-wrap gap-3">
@@ -104,7 +104,11 @@ export default async function HomePage() {
                 withSymbol: SETTLEMENT_SYMBOL,
               })}
             />
-            <Stat label="Bid cap per auction" value={config.maxBids} hint="bounds settlement cost" />
+            <Stat
+              label="Bid cap per auction"
+              value={config.maxBids}
+              hint="bounds settlement cost"
+            />
             <Stat
               label="Attestation quorum"
               value={`${config.relayerThreshold} of ${config.relayerCommitteeSize}`}
@@ -136,11 +140,7 @@ export default async function HomePage() {
         ) : (
           <div className="space-y-3">
             {list.map((auction) => (
-              <AuctionCard
-                key={auction.id}
-                auction={auction}
-                tokenSymbol={SETTLEMENT_SYMBOL}
-              />
+              <AuctionCard key={auction.id} auction={auction} tokenSymbol={SETTLEMENT_SYMBOL} />
             ))}
           </div>
         )}

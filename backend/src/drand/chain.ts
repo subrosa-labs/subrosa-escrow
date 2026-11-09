@@ -53,7 +53,8 @@ export const TESTNET_UNCHAINED: DrandChain = {
   schemeId: 'pedersen-bls-unchained',
   periodSeconds: 3,
   genesisTime: 1_651_677_099,
-  baseUrl: 'https://pl-us.testnet.drand.sh/7672797f548f3f4748ac4bf3352fc6c6b6468c9ad40ad456a397545c6e2df5bf',
+  baseUrl:
+    'https://pl-us.testnet.drand.sh/7672797f548f3f4748ac4bf3352fc6c6b6468c9ad40ad456a397545c6e2df5bf',
 };
 
 export const KNOWN_CHAINS: readonly DrandChain[] = [QUICKNET, TESTNET_UNCHAINED];

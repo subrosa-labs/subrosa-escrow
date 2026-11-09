@@ -76,12 +76,30 @@
     },
 
     "lifecycle": [
-      { "state": "Sealed", "description": "SEQUENCE <= commit_deadline. Bidders submit a commitment and a flat bond. The sealed envelope stays off-chain; only sha256(envelope) and the commitment are on-chain. The seller may cancel, but only here and only paying for it." },
-      { "state": "Reveal", "description": "commit_deadline < SEQUENCE <= reveal_deadline. Once the reveal-round beacon is live and attested, anyone reveals (bidder, relayer, or a third party) by supplying the envelope and its opening." },
-      { "state": "Funding", "description": "reveal_deadline < SEQUENCE <= funding_deadline. The provisional winner tops up escrow to the full hammer price. Reveal and fund are both still accepted in this window, so a slow reveal is not a lost bid." },
-      { "state": "Settled", "description": "Reachable only after funding_deadline, and permissionless: the highest fully-escrowed revealed bid wins. Escrow releases to the seller net of the protocol fee; slashed bonds go to the seller; losing bids are refunded by pull payment in `claim`, where each refund is derived from the claimant's own bid." },
-      { "state": "Cancelled", "description": "Seller cancelled while Sealed. With no sealed bids the seller bond is returned; with bids it is liquidated and split equally between them as `cancel_compensation`. Sealed bidders reclaim their bond through `claim`." },
-      { "state": "Failed", "description": "Reveal and funding closed without a single fully-escrowed bid at or above the reserve. Every funded bid is refundable; slashed bonds still go to the seller." }
+      {
+        "state": "Sealed",
+        "description": "SEQUENCE <= commit_deadline. Bidders submit a commitment and a flat bond. The sealed envelope stays off-chain; only sha256(envelope) and the commitment are on-chain. The seller may cancel, but only here and only paying for it."
+      },
+      {
+        "state": "Reveal",
+        "description": "commit_deadline < SEQUENCE <= reveal_deadline. Once the reveal-round beacon is live and attested, anyone reveals (bidder, relayer, or a third party) by supplying the envelope and its opening."
+      },
+      {
+        "state": "Funding",
+        "description": "reveal_deadline < SEQUENCE <= funding_deadline. The provisional winner tops up escrow to the full hammer price. Reveal and fund are both still accepted in this window, so a slow reveal is not a lost bid."
+      },
+      {
+        "state": "Settled",
+        "description": "Reachable only after funding_deadline, and permissionless: the highest fully-escrowed revealed bid wins. Escrow releases to the seller net of the protocol fee; slashed bonds go to the seller; losing bids are refunded by pull payment in `claim`, where each refund is derived from the claimant's own bid."
+      },
+      {
+        "state": "Cancelled",
+        "description": "Seller cancelled while Sealed. With no sealed bids the seller bond is returned; with bids it is liquidated and split equally between them as `cancel_compensation`. Sealed bidders reclaim their bond through `claim`."
+      },
+      {
+        "state": "Failed",
+        "description": "Reveal and funding closed without a single fully-escrowed bid at or above the reserve. Every funded bid is refundable; slashed bonds still go to the seller."
+      }
     ],
 
     "invariants": [

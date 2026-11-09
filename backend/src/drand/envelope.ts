@@ -58,11 +58,7 @@ export interface SealedBidBundle {
  * envelope that anyone can read instantly. That is a silent privacy failure, so it
  * is rejected at the boundary rather than trusted to the caller.
  */
-export function assertRoundIsFuture(
-  round: number,
-  chain: DrandChain,
-  nowMs = Date.now(),
-): void {
+export function assertRoundIsFuture(round: number, chain: DrandChain, nowMs = Date.now()): void {
   if (isRoundAvailable(round, chain, nowMs)) {
     throw new SealedBidFormatError(
       `reveal round ${round} was published at ${new Date(roundTime(round, chain) * 1000).toISOString()}; ` +

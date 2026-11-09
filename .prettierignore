@@ -1,0 +1,16 @@
+# Dependencies and build output
+node_modules/
+backend/dist/
+frontend/.next/
+frontend/out/
+coverage/
+
+# Generated / vendored
+package-lock.json
+contracts/target/
+contracts/**/target/
+contracts/**/test_snapshots/
+*.wasm
+
+# Assets and templates that Prettier would reformat destructively
+frontend/app/globals.css

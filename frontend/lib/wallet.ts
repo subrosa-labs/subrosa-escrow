@@ -93,7 +93,11 @@ export async function currentNetworkPassphrase(): Promise<string | null> {
 }
 
 /** Ask the wallet to sign an unsigned envelope. Returns signed XDR. */
-export async function signEnvelope(xdr: string, networkPassphrase: string, address: string): Promise<string> {
+export async function signEnvelope(
+  xdr: string,
+  networkPassphrase: string,
+  address: string,
+): Promise<string> {
   const api = await freighter();
   const signed = await api.signTransaction(xdr, { networkPassphrase, address });
   if (signed.error) throw new WalletError(signed.error.message);

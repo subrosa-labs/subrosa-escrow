@@ -74,7 +74,10 @@ function gitHead() {
 
 function tryCommand(command, args) {
   try {
-    return execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    return execFileSync(command, args, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
   } catch {
     return null;
   }

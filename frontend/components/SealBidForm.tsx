@@ -109,8 +109,8 @@ export function SealBidForm({
   if (address === null) {
     return (
       <Notice tone="info" title="Connect a wallet to bid">
-        Your bid is encrypted in your browser. There is no account to create and nothing to
-        upload — but the seal itself is a signed transaction, so a wallet is required.
+        Your bid is encrypted in your browser. There is no account to create and nothing to upload —
+        but the seal itself is a signed transaction, so a wallet is required.
       </Notice>
     );
   }
@@ -120,8 +120,8 @@ export function SealBidForm({
       <Notice tone="warn" title="Sealing has closed">
         Round {auction.revealRound} was published at{' '}
         {new Date(roundTime(auction.revealRound, QUICKNET) * 1000).toLocaleString()}. A bid sealed
-        now would be readable immediately by anyone, so the contract refuses it and so does the
-        UI. Wait for the next auction.
+        now would be readable immediately by anyone, so the contract refuses it and so does the UI.
+        Wait for the next auction.
       </Notice>
     );
   }
@@ -171,14 +171,14 @@ export function SealBidForm({
           ). The contract sets this, not you.
         </p>
         <p>
-          <span className="text-ash-200">Revealing is compulsory.</span> If you do not reveal
-          before the reveal deadline, the bond is forfeit and paid to the seller. That is what
-          makes a sealed bid binding rather than an option.
+          <span className="text-ash-200">Revealing is compulsory.</span> If you do not reveal before
+          the reveal deadline, the bond is forfeit and paid to the seller. That is what makes a
+          sealed bid binding rather than an option.
         </p>
         <p>
           <span className="text-ash-200">Sealed now, readable in {shortly(opensInMs)}.</span> The
-          key is the drand beacon for round {auction.revealRound} — nobody, including this
-          service, holds it.
+          key is the drand beacon for round {auction.revealRound} — nobody, including this service,
+          holds it.
         </p>
       </div>
 
@@ -193,8 +193,8 @@ export function SealBidForm({
 
       {passphrase === null ? (
         <Notice tone="warn">
-          The relayer is unreachable, so the network this transaction must be signed for is
-          unknown. Start the backend (or check its URL) and try again.
+          The relayer is unreachable, so the network this transaction must be signed for is unknown.
+          Start the backend (or check its URL) and try again.
         </Notice>
       ) : null}
 
@@ -259,7 +259,11 @@ function BackupPanel({ backup }: { backup: Backup }) {
             <code className="min-w-0 flex-1 truncate font-mono text-xs text-ash-200" title={value}>
               {value}
             </code>
-            <button type="button" className="btn-ghost px-2 py-1 text-xs" onClick={() => void copy(key, value)}>
+            <button
+              type="button"
+              className="btn-ghost px-2 py-1 text-xs"
+              onClick={() => void copy(key, value)}
+            >
               {copied === key ? 'copied' : 'copy'}
             </button>
           </div>

@@ -25,7 +25,15 @@
  * what stops an opening from being replayed into a different auction.
  */
 
-import { concatBytes, hexToBytes32, i128be, sha256, u64be, utf8, type Bytes } from '../util/bytes.ts';
+import {
+  concatBytes,
+  hexToBytes32,
+  i128be,
+  sha256,
+  u64be,
+  utf8,
+  type Bytes,
+} from '../util/bytes.ts';
 
 /** ASCII domain separator for the bid commitment. Must match `DOMAIN_BID` in Rust. */
 export const BID_DOMAIN = 'subrosa.bid.v1';
@@ -68,11 +76,7 @@ export function computeCommitment(input: CommitmentInput): Bytes {
 }
 
 /** Convenience wrappers for callers that receive hex from JSON. */
-export function commitmentFromHex(
-  auctionId: bigint,
-  amount: bigint,
-  saltHex: string,
-): Bytes {
+export function commitmentFromHex(auctionId: bigint, amount: bigint, saltHex: string): Bytes {
   return computeCommitment({ auctionId, amount, salt: hexToBytes32(saltHex, 'salt') });
 }
 
@@ -94,9 +98,7 @@ export function beaconPreimage(input: BeaconDigestInput): Bytes {
     u64be(input.auctionId),
   );
   if (preimage.length !== BEACON_PREIMAGE_LEN) {
-    throw new Error(
-      `beacon preimage must be ${BEACON_PREIMAGE_LEN} bytes, got ${preimage.length}`,
-    );
+    throw new Error(`beacon preimage must be ${BEACON_PREIMAGE_LEN} bytes, got ${preimage.length}`);
   }
   return preimage;
 }

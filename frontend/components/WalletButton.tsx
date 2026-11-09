@@ -6,7 +6,8 @@ import { useWallet } from './WalletProvider.tsx';
 import { shortenAddress } from '../lib/format.ts';
 
 export function WalletButton() {
-  const { address, available, connecting, error, connect, disconnect, networkMismatch } = useWallet();
+  const { address, available, connecting, error, connect, disconnect, networkMismatch } =
+    useWallet();
 
   if (address) {
     return (
@@ -60,9 +61,9 @@ export function NetworkWarning() {
         Relayer: <span className="font-mono">{expectedPassphrase ?? 'unknown'}</span>
       </p>
       <p className="mt-2 text-amber2/80">
-        Switch Freighter to the relayer&rsquo;s network before signing. A transaction signed for
-        the wrong network is rejected by the RPC in a way whose error message rarely mentions the
-        real cause.
+        Switch Freighter to the relayer&rsquo;s network before signing. A transaction signed for the
+        wrong network is rejected by the RPC in a way whose error message rarely mentions the real
+        cause.
       </p>
     </div>
   );

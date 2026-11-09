@@ -1,0 +1,52 @@
+# Local development: the relayer plus Postgres.
+#
+#   cp backend/.env.example backend/.env    # fill in SUBROSA_CONTRACT_ID etc.
+#   docker compose up --build
+#
+# The values below are development defaults, not secrets. Do not reuse this file
+# for a real deployment: read docs/DEPLOYMENT.md instead. No secret is baked into
+# an image; RELAYER_SECRET_KEYS and ADMIN_TOKEN come from backend/.env.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-subrosa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-subrosa_dev_only}
+      POSTGRES_DB: ${POSTGRES_DB:-subrosa}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - subrosa-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-subrosa} -d ${POSTGRES_DB:-subrosa}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Optional on purpose: the API can boot with the in-memory store while you are
+    # filling this in. Compose then falls back to the environment below.
+    env_file:
+      - path: backend/.env
+        required: false
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://${POSTGRES_USER:-subrosa}:${POSTGRES_PASSWORD:-subrosa_dev_only}@db:5432/${POSTGRES_DB:-subrosa}
+      STELLAR_NETWORK: ${STELLAR_NETWORK:-testnet}
+      PORT: '8080'
+      HOST: 0.0.0.0
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      WORKER_ENABLED: ${WORKER_ENABLED:-false}
+      INDEXER_ENABLED: ${INDEXER_ENABLED:-false}
+    ports:
+      - '${PORT:-8080}:8080'
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  subrosa-pgdata:

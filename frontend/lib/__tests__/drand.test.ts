@@ -54,7 +54,9 @@ describe('roundAt / roundTime', () => {
 
     const estimatedClose = now + commitWindowLedgers * assumedLedgerSeconds;
     const expected =
-      Math.floor((estimatedClose - QUICKNET.genesisTime) / QUICKNET.periodSeconds) + 1 + marginRounds;
+      Math.floor((estimatedClose - QUICKNET.genesisTime) / QUICKNET.periodSeconds) +
+      1 +
+      marginRounds;
 
     expect(roundAt(estimatedClose) + marginRounds).toBe(expected);
     // The whole point of the margin: the beacon must not exist while commits are open.

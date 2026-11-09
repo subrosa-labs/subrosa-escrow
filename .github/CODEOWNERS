@@ -1,0 +1,18 @@
+# Default owners for everything in the repository.
+#
+# REPLACE_ME: these handles are placeholders. Until they are real GitHub users or
+# teams, GitHub ignores the rules for anyone it cannot resolve, and the required
+# review protection this file is meant to backstop is not enforced.
+*                       @REPLACE_ME
+
+# The escrow contract holds funds. Changes here should require at least one
+# reviewer with protocol context, independent of a general maintainer.
+/contracts/subrosa_escrow/src/   @REPLACE_ME
+
+# Deployment scripts perform irreversible network writes.
+/contracts/scripts/              @REPLACE_ME
+/scripts/                        @REPLACE_ME
+
+# CI, dependency policy and the security policy itself.
+/.github/                        @REPLACE_ME
+/SECURITY.md                     @REPLACE_ME

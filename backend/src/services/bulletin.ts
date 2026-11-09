@@ -130,7 +130,9 @@ export class EnvelopeBulletin {
    * If a row was corrupted at rest, this drops it here instead of burning a
    * transaction on an envelope that could never satisfy the on-chain hash.
    */
-  async verified(auctionId: bigint): Promise<{ usable: EnvelopeRecord[]; corrupted: EnvelopeRecord[] }> {
+  async verified(
+    auctionId: bigint,
+  ): Promise<{ usable: EnvelopeRecord[]; corrupted: EnvelopeRecord[] }> {
     const records = await this.list(auctionId);
     const usable: EnvelopeRecord[] = [];
     const corrupted: EnvelopeRecord[] = [];

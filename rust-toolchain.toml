@@ -1,0 +1,8 @@
+# Pinned so a local build and CI compile the same wasm inputs. The Soroban SDK in
+# contracts/Cargo.toml requires Rust >= 1.81; the wasm target is needed by
+# `make -C contracts build` and `make -C contracts test` alike.
+[toolchain]
+channel = "1.81.0"
+profile = "minimal"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-unknown-unknown"]
