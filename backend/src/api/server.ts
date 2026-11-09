@@ -17,7 +17,7 @@
  * on a user's behalf. The relayer only ever signs its own administrative calls.
  */
 
-import Fastify, { type FastifyInstance } from 'fastify';
+import Fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import type { App } from '../app.ts';
 import { childLogger } from '../logger.ts';
@@ -32,7 +32,9 @@ import {
 } from '../stellar/contract.ts';
 import { SubmissionError, contractErrorName } from '../stellar/errors.ts';
 import {
+  auctionDetailQuery,
   auctionIdParam,
+  bidPageSchema,
   bidderParam,
   paginationSchema,
   prepareSchema,
@@ -42,7 +44,16 @@ import {
 
 export function buildServer(app: App): FastifyInstance {
   const log = childLogger('api');
-  const server = Fastify({ logger: app.log, trustProxy: true, bodyLimit: 256 * 1024 });
+  // Fastify 5 only accepts a configuration object for `logger`; an existing pino
+  // instance has to be passed as `loggerInstance`. Passing it as `logger` throws at
+  // construction time, so the API could not boot at all.
+  const server = Fastify({
+    // Widened to Fastify's own logger interface so the returned instance keeps the
+    // public `FastifyInstance` type rather than Fastify's pino-specific generic.
+    loggerInstance: app.log as FastifyBaseLogger,
+    trustProxy: true,
+    bodyLimit: 256 * 1024,
+  });
 
   // -- CORS ---------------------------------------------------------------
   server.addHook('onRequest', (request, reply, done) => {
@@ -240,7 +251,7 @@ export function buildServer(app: App): FastifyInstance {
 
   server.get('/v1/auctions/:id', async (request, reply) => {
     const { id } = auctionIdParam.parse(request.params);
-    const query = request.query as Record<string, string | undefined>;
+    const { claimant } = auctionDetailQuery.parse(request.query);
 
     const auction = await app.contract.findAuction(id);
     if (!auction) {
@@ -261,10 +272,7 @@ export function buildServer(app: App): FastifyInstance {
         .catch(() => null),
     ]);
 
-    const claimable =
-      typeof query['claimant'] === 'string'
-        ? (await app.contract.getClaimable(id, query['claimant'])).toString()
-        : null;
+    const claimable = claimant ? (await app.contract.getClaimable(id, claimant)).toString() : null;
 
     return {
       auction: auctionJson(auction),
@@ -300,9 +308,7 @@ export function buildServer(app: App): FastifyInstance {
 
   server.get('/v1/auctions/:id/bids', async (request, reply) => {
     const { id } = auctionIdParam.parse(request.params);
-    const query = request.query as Record<string, string | undefined>;
-    const limit = Math.min(Number(query['limit'] ?? 50), 50);
-    const start = Number(query['start'] ?? 0);
+    const { limit, start } = bidPageSchema.parse(request.query);
 
     const auction = await app.contract.findAuction(id);
     if (!auction) {
