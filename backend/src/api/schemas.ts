@@ -103,6 +103,30 @@ export const auctionIdParam = z.object({
   id: z.coerce.bigint().nonnegative(),
 });
 
+/**
+ * Query for the auction detail route.
+ *
+ * `claimant` is optional because reads must work without a wallet. When it is
+ * present it has to be a real strkey: passing an arbitrary string through to the
+ * contract produces a 502 `chain_read_failed`, which reads like an outage rather
+ * than a bad request.
+ */
+export const auctionDetailQuery = z.object({
+  claimant: strkey.optional(),
+});
+
+/**
+ * Query for the bid list.
+ *
+ * `start` is a bid index within the auction, not a ledger sequence. Both bounds
+ * are enforced here so a `limit=abc` or negative `start` cannot become `NaN` and
+ * reach the contract simulation.
+ */
+export const bidPageSchema = z.object({
+  limit: z.coerce.number().int().min(1).max(50).default(50),
+  start: z.coerce.number().int().min(0).default(0),
+});
+
 export const bidderParam = z.object({
   id: z.coerce.bigint().nonnegative(),
   bidder: strkey,
