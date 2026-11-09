@@ -16,6 +16,8 @@
     "typecheck": "npm run typecheck --workspace backend && npm run typecheck --workspace frontend",
     "test": "npm run test --workspace backend && npm run test --workspace frontend",
     "lint": "npm run lint --workspace backend && npm run lint --workspace frontend",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "dev:backend": "npm run dev --workspace backend",
     "dev:frontend": "npm run dev --workspace frontend",
     "contract:build": "make -C contracts build",
@@ -31,5 +33,8 @@
     "drand",
     "timelock-encryption",
     "privacy"
-  ]
+  ],
+  "devDependencies": {
+    "prettier": "^3.9.10"
+  }
 }
