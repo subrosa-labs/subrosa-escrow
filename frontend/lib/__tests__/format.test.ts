@@ -9,7 +9,13 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { formatAmount, formatBps, formatDuration, parseAmountToBaseUnits, shortenAddress } from '../format.ts';
+import {
+  formatAmount,
+  formatBps,
+  formatDuration,
+  parseAmountToBaseUnits,
+  shortenAddress,
+} from '../format.ts';
 
 describe('parseAmountToBaseUnits', () => {
   it('scales to the token\u2019s smallest unit', () => {

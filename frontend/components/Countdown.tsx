@@ -53,11 +53,7 @@ export function Countdown({ targetMs, label, className, onElapsed }: CountdownPr
   }
 
   if (elapsed) {
-    return (
-      <span className={className}>
-        {label ? `${label} ` : ''}now
-      </span>
-    );
+    return <span className={className}>{label ? `${label} ` : ''}now</span>;
   }
 
   return (

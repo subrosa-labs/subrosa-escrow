@@ -129,7 +129,9 @@ export interface Store {
   getAttestation(auctionId: string): Promise<AttestationRecord | undefined>;
 
   // -- submission audit ----------------------------------------------------
-  recordSubmission(record: Omit<SubmissionRecord, 'id' | 'createdAt'> & { id?: string }): Promise<SubmissionRecord>;
+  recordSubmission(
+    record: Omit<SubmissionRecord, 'id' | 'createdAt'> & { id?: string },
+  ): Promise<SubmissionRecord>;
   listSubmissions(auctionId: string, limit?: number): Promise<SubmissionRecord[]>;
 
   // -- read-through cache --------------------------------------------------

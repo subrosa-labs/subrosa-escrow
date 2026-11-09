@@ -7,7 +7,13 @@
  *   node scripts/drand-info.ts --commit-window 3600 --json
  */
 
-import { QUICKNET, msUntilRound, predictRevealRound, roundAt, roundTime } from '../src/drand/chain.ts';
+import {
+  QUICKNET,
+  msUntilRound,
+  predictRevealRound,
+  roundAt,
+  roundTime,
+} from '../src/drand/chain.ts';
 import { createDrandClient, fetchChainInfo } from '../src/drand/beacon.ts';
 
 interface Options {
@@ -79,7 +85,8 @@ async function main(): Promise<void> {
       revealRound: predicted,
       revealRoundPublishesAt: new Date(roundTime(predicted, chain) * 1000).toISOString(),
       marginRoundsAheadOfCommitClose:
-        predicted - roundAt(nowSeconds + options.commitWindowLedgers * options.assumedLedgerSeconds, chain),
+        predicted -
+        roundAt(nowSeconds + options.commitWindowLedgers * options.assumedLedgerSeconds, chain),
     },
   };
 

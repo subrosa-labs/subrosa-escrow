@@ -36,9 +36,7 @@ export function CreateAuctionForm({ config, tokenSymbol }: CreateAuctionFormProp
 
   const [reserve, setReserve] = useState('');
   const [bond, setBond] = useState(formatAmount(config.minBond, config.tokenDecimals));
-  const [sellerBond, setSellerBond] = useState(
-    formatAmount(config.minBond, config.tokenDecimals),
-  );
+  const [sellerBond, setSellerBond] = useState(formatAmount(config.minBond, config.tokenDecimals));
   const [windows, setWindows] = useState(DEFAULT_WINDOWS);
   const [steps, setSteps] = useState<readonly FlowStep[]>([]);
   const [busy, setBusy] = useState(false);
@@ -59,7 +57,8 @@ export function CreateAuctionForm({ config, tokenSymbol }: CreateAuctionFormProp
 
   const problems = useMemo(() => {
     const found: string[] = [];
-    if (parsed.reserve === null || parsed.reserve <= 0n) found.push('enter a positive reserve price');
+    if (parsed.reserve === null || parsed.reserve <= 0n)
+      found.push('enter a positive reserve price');
     if (parsed.bond === null || parsed.bond < BigInt(config.minBond)) {
       found.push(
         `the bid bond must be at least ${formatAmount(config.minBond, config.tokenDecimals, {
@@ -79,7 +78,14 @@ export function CreateAuctionForm({ config, tokenSymbol }: CreateAuctionFormProp
       found.push('the reveal and funding windows must both be at least one ledger');
     }
     return found;
-  }, [parsed, windows, config.minBond, config.minRevealLeadLedgers, config.tokenDecimals, tokenSymbol]);
+  }, [
+    parsed,
+    windows,
+    config.minBond,
+    config.minRevealLeadLedgers,
+    config.tokenDecimals,
+    tokenSymbol,
+  ]);
 
   async function create() {
     if (
@@ -234,7 +240,11 @@ export function CreateAuctionForm({ config, tokenSymbol }: CreateAuctionFormProp
       ) : null}
 
       <StepList steps={steps} />
-      {error ? <Notice tone="error" title="Auction not created">{error}</Notice> : null}
+      {error ? (
+        <Notice tone="error" title="Auction not created">
+          {error}
+        </Notice>
+      ) : null}
     </div>
   );
 }

@@ -67,7 +67,9 @@ export async function createApp(options: CreateAppOptions = {}): Promise<App> {
 
   // The fee source only exists to sponsor user transactions; without it the
   // relayer can still do its own work.
-  const feeSource = config.relayerSecretKeys[0] ? parseRelayerSecret(config.relayerSecretKeys[0]) : undefined;
+  const feeSource = config.relayerSecretKeys[0]
+    ? parseRelayerSecret(config.relayerSecretKeys[0])
+    : undefined;
 
   const relayer = new Relayer({
     server,
@@ -146,7 +148,9 @@ async function runPreflight(input: PreflightInput): Promise<string[]> {
       );
     }
   } catch (error) {
-    problems.push(`contract ${config.SUBROSA_CONTRACT_ID} did not answer schema_version: ${describe(error)}`);
+    problems.push(
+      `contract ${config.SUBROSA_CONTRACT_ID} did not answer schema_version: ${describe(error)}`,
+    );
     return problems;
   }
 
@@ -160,7 +164,12 @@ async function runPreflight(input: PreflightInput): Promise<string[]> {
       const check = await input.orchestrator.selfCheck();
       problems.push(...check.problems);
       log.info(
-        { holds: check.holds, threshold: check.threshold, committee: check.committee, chain: check.chain },
+        {
+          holds: check.holds,
+          threshold: check.threshold,
+          committee: check.committee,
+          chain: check.chain,
+        },
         'relayer quorum check',
       );
     } catch (error) {

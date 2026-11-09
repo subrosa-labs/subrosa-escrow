@@ -73,12 +73,7 @@ describe('struct encoding', () => {
     });
 
     // Byte-ascending, and no accidental reliance on JS object insertion order.
-    expect(keys).toEqual([
-      'bond',
-      'commit_window_ledgers',
-      'reserve_price',
-      'seller_bond',
-    ]);
+    expect(keys).toEqual(['bond', 'commit_window_ledgers', 'reserve_price', 'seller_bond']);
     for (let i = 1; i < keys.length; i++) {
       expect(Buffer.compare(Buffer.from(keys[i - 1]!), Buffer.from(keys[i]!))).toBeLessThan(0);
     }
@@ -91,7 +86,10 @@ describe('struct encoding', () => {
   });
 
   it('round-trips through scValToNative for inspection', () => {
-    const encoded = structScVal({ signer_index: u32ScVal(2), signature: bytesScVal(new Uint8Array(64).fill(9)) });
+    const encoded = structScVal({
+      signer_index: u32ScVal(2),
+      signature: bytesScVal(new Uint8Array(64).fill(9)),
+    });
     const native = scValToNative(encoded) as { signer_index: number; signature: Buffer };
     expect(native.signer_index).toBe(2);
     expect(native.signature).toHaveLength(64);
@@ -165,9 +163,7 @@ describe('decoders', () => {
   });
 
   it('detects an ScVal error as such', () => {
-    const error = xdr.ScVal.scvError(
-      xdr.ScError.sceContract(13),
-    );
+    const error = xdr.ScVal.scvError(xdr.ScError.sceContract(13));
     expect(isXdrType(error, 'error')).toBe(true);
   });
 });

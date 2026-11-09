@@ -24,7 +24,12 @@ import { childLogger } from '../logger.ts';
 import { msUntilRound, roundAt, roundTime } from '../drand/chain.ts';
 import { BulletinError } from '../services/bulletin.ts';
 import { OrchestratorError } from '../services/orchestrator.ts';
-import { ContractCallError, isTerminal, type AuctionView, type BidView } from '../stellar/contract.ts';
+import {
+  ContractCallError,
+  isTerminal,
+  type AuctionView,
+  type BidView,
+} from '../stellar/contract.ts';
 import { SubmissionError, contractErrorName } from '../stellar/errors.ts';
 import {
   auctionIdParam,
@@ -43,8 +48,7 @@ export function buildServer(app: App): FastifyInstance {
   server.addHook('onRequest', (request, reply, done) => {
     const origin = request.headers.origin;
     const allowed = app.config.corsOrigins;
-    const permit =
-      allowed === '*' || (typeof origin === 'string' && allowed.includes(origin));
+    const permit = allowed === '*' || (typeof origin === 'string' && allowed.includes(origin));
     if (permit) {
       reply.header('Access-Control-Allow-Origin', allowed === '*' ? '*' : (origin ?? '*'));
       reply.header('Vary', 'Origin');
@@ -98,7 +102,9 @@ export function buildServer(app: App): FastifyInstance {
   });
 
   server.setNotFoundHandler((request, reply) => {
-    reply.code(404).send({ error: 'not_found', message: `no route for ${request.method} ${request.url}` });
+    reply
+      .code(404)
+      .send({ error: 'not_found', message: `no route for ${request.method} ${request.url}` });
   });
 
   // -----------------------------------------------------------------------
@@ -150,7 +156,10 @@ export function buildServer(app: App): FastifyInstance {
       nextRoundInMs: nextPublishMs,
       // The contract's pinned parameters, so a client can confirm they agree.
       contract: {
-        genesis: await app.contract.timestampForRound(1).then(Number).catch(() => null),
+        genesis: await app.contract
+          .timestampForRound(1)
+          .then(Number)
+          .catch(() => null),
       },
       verification: {
         command: 'npm run drand:verify --workspace backend -- --round <n>',
@@ -278,9 +287,12 @@ export function buildServer(app: App): FastifyInstance {
         revealRoundPublishesAt: roundTime(auction.revealRound, app.chain) * 1000,
         revealRoundAvailable: roundTime(auction.revealRound, app.chain) * 1000 <= now,
         /** Ledgers left in each window; negative once the window has closed. */
-        commitLedgersRemaining: currentLedger === null ? null : auction.commitDeadline - currentLedger,
-        revealLedgersRemaining: currentLedger === null ? null : auction.revealDeadline - currentLedger,
-        fundingLedgersRemaining: currentLedger === null ? null : auction.fundingDeadline - currentLedger,
+        commitLedgersRemaining:
+          currentLedger === null ? null : auction.commitDeadline - currentLedger,
+        revealLedgersRemaining:
+          currentLedger === null ? null : auction.revealDeadline - currentLedger,
+        fundingLedgersRemaining:
+          currentLedger === null ? null : auction.fundingDeadline - currentLedger,
         terminal: isTerminal(auction.phase),
       },
     };
@@ -543,7 +555,10 @@ export function buildServer(app: App): FastifyInstance {
       sponsored = true;
     }
 
-    const result = await app.relayer.submit(submitted, body.sponsor ? 'sponsored transaction' : 'transaction');
+    const result = await app.relayer.submit(
+      submitted,
+      body.sponsor ? 'sponsored transaction' : 'transaction',
+    );
     await app.store.recordSubmission({
       auctionId: null,
       method: body.sponsor ? 'submit_sponsored' : 'submit',

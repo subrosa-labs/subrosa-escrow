@@ -31,13 +31,7 @@ import type { HttpChainClient } from 'drand-client';
 import type { Config } from '../config.ts';
 import { childLogger, type Logger } from '../logger.ts';
 import type { AttestationRecord, JobRecord, Store } from '../store/types.ts';
-import {
-  QUICKNET,
-  chainByHash,
-  msUntilRound,
-  roundTime,
-  type DrandChain,
-} from '../drand/chain.ts';
+import { QUICKNET, chainByHash, msUntilRound, roundTime, type DrandChain } from '../drand/chain.ts';
 import { createDrandClient, fetchVerifiedBeacon } from '../drand/beacon.ts';
 import { resolveSigners, signBeaconDigest, type RelayerSigner } from '../drand/attestation.ts';
 import { assertOpeningMatchesOnChainCommitment, openBid } from '../drand/envelope.ts';
@@ -257,14 +251,18 @@ export class RelayerOrchestrator {
    * not require re-fetching and re-signing — and so the exact bytes that were signed
    * are auditable afterwards.
    */
-  async attestBeacon(
-    auctionId: bigint,
-  ): Promise<AdvanceResult> {
+  async attestBeacon(auctionId: bigint): Promise<AdvanceResult> {
     const id = auctionId.toString();
     const auction = await this.deps.contract.findAuction(auctionId);
-    if (!auction) return { status: 'skipped', kind: 'attest', auctionId: id, reason: 'auction_not_found' };
+    if (!auction)
+      return { status: 'skipped', kind: 'attest', auctionId: id, reason: 'auction_not_found' };
     if (auction.beacon) {
-      return { status: 'skipped', kind: 'attest', auctionId: id, reason: 'beacon_already_recorded' };
+      return {
+        status: 'skipped',
+        kind: 'attest',
+        auctionId: id,
+        reason: 'beacon_already_recorded',
+      };
     }
 
     const waitMs = msUntilRound(auction.revealRound, this.chain);
@@ -316,7 +314,8 @@ export class RelayerOrchestrator {
     }
 
     const signer = this.signers[0];
-    if (!signer) throw new OrchestratorError('no relayer signer available to pay for the attestation');
+    if (!signer)
+      throw new OrchestratorError('no relayer signer available to pay for the attestation');
 
     const args = this.deps.contract.attestBeaconArgs(
       auctionId,
@@ -339,7 +338,12 @@ export class RelayerOrchestrator {
     });
 
     this.log.info(
-      { auctionId: id, round: attestation.round, signers: attestation.signerIndexes, hash: result.hash },
+      {
+        auctionId: id,
+        round: attestation.round,
+        signers: attestation.signerIndexes,
+        hash: result.hash,
+      },
       'beacon attested',
     );
 
@@ -366,12 +370,24 @@ export class RelayerOrchestrator {
   async revealAll(auctionId: bigint): Promise<AdvanceResult> {
     const id = auctionId.toString();
     const auction = await this.deps.contract.findAuction(auctionId);
-    if (!auction) return { status: 'skipped', kind: 'reveal', auctionId: id, reason: 'auction_not_found' };
+    if (!auction)
+      return { status: 'skipped', kind: 'reveal', auctionId: id, reason: 'auction_not_found' };
     if (isTerminal(auction.phase)) {
-      return { status: 'skipped', kind: 'reveal', auctionId: id, reason: `auction is ${auction.phase}` };
+      return {
+        status: 'skipped',
+        kind: 'reveal',
+        auctionId: id,
+        reason: `auction is ${auction.phase}`,
+      };
     }
     if (auction.phase === 'Sealed') {
-      return { status: 'deferred', kind: 'reveal', auctionId: id, reason: 'commits are still open', retryInMs: 5_000 };
+      return {
+        status: 'deferred',
+        kind: 'reveal',
+        auctionId: id,
+        reason: 'commits are still open',
+        retryInMs: 5_000,
+      };
     }
     if (!auction.beacon) {
       return {
@@ -395,7 +411,10 @@ export class RelayerOrchestrator {
     for (const record of usable) {
       const bid = await this.deps.contract.findBid(auctionId, record.bidder);
       if (!bid) {
-        this.log.warn({ auctionId: id, bidder: record.bidder }, 'envelope has no on-chain bid; skipping');
+        this.log.warn(
+          { auctionId: id, bidder: record.bidder },
+          'envelope has no on-chain bid; skipping',
+        );
         continue;
       }
       if (bid.revealed) {
@@ -421,11 +440,19 @@ export class RelayerOrchestrator {
       }
 
       try {
-        assertOpeningMatchesOnChainCommitment(opened, hexToBytes32(bid.commitment, 'commitment'), auctionId);
+        assertOpeningMatchesOnChainCommitment(
+          opened,
+          hexToBytes32(bid.commitment, 'commitment'),
+          auctionId,
+        );
       } catch (error) {
         mismatched++;
         this.log.error(
-          { auctionId: id, bidder: record.bidder, err: error instanceof Error ? error.message : String(error) },
+          {
+            auctionId: id,
+            bidder: record.bidder,
+            err: error instanceof Error ? error.message : String(error),
+          },
           'envelope does not match its on-chain commitment; refusing to spend a fee on it',
         );
         continue;
@@ -469,14 +496,21 @@ export class RelayerOrchestrator {
       this.log.info({ auctionId: id }, 'no envelopes to reveal');
     }
 
-    const nextJob: JobRecord['kind'] = auction.fundingDeadline > this.approxLedger ? 'settle' : 'reveal';
+    const nextJob: JobRecord['kind'] =
+      auction.fundingDeadline > this.approxLedger ? 'settle' : 'reveal';
 
     return {
       status: revealed > 0 ? 'done' : 'skipped',
       kind: 'reveal',
       auctionId: id,
       ...(txHashes.length > 0 ? { txHashes } : {}),
-      details: { revealed, alreadyRevealed: already, commitmentMismatches: mismatched, corrupted: corrupted.length, next: nextJob },
+      details: {
+        revealed,
+        alreadyRevealed: already,
+        commitmentMismatches: mismatched,
+        corrupted: corrupted.length,
+        next: nextJob,
+      },
     };
   }
 
@@ -488,9 +522,15 @@ export class RelayerOrchestrator {
   async settle(auctionId: bigint): Promise<AdvanceResult> {
     const id = auctionId.toString();
     const auction = await this.deps.contract.findAuction(auctionId);
-    if (!auction) return { status: 'skipped', kind: 'settle', auctionId: id, reason: 'auction_not_found' };
+    if (!auction)
+      return { status: 'skipped', kind: 'settle', auctionId: id, reason: 'auction_not_found' };
     if (isTerminal(auction.phase)) {
-      return { status: 'skipped', kind: 'settle', auctionId: id, reason: `auction is ${auction.phase}` };
+      return {
+        status: 'skipped',
+        kind: 'settle',
+        auctionId: id,
+        reason: `auction is ${auction.phase}`,
+      };
     }
 
     const ledger = await this.refreshLedger();

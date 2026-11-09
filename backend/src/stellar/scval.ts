@@ -41,12 +41,11 @@ export function structScVal(fields: Record<string, ScVal>): ScVal {
   if (names.length === 0) {
     throw new EncodingError('structScVal requires at least one field');
   }
-  const sorted = [...names].sort((a, b) => Buffer.compare(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8')));
+  const sorted = [...names].sort((a, b) =>
+    Buffer.compare(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8')),
+  );
   return xdr.ScVal.scvMap(
-    sorted.map(
-      (name) =>
-        new xdr.ScMapEntry({ key: sym(name), val: fields[name] as ScVal }),
-    ),
+    sorted.map((name) => new xdr.ScMapEntry({ key: sym(name), val: fields[name] as ScVal })),
   );
 }
 

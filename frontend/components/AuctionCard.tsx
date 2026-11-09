@@ -48,11 +48,7 @@ export function AuctionCard({
           label="Reserve"
           value={formatAmount(auction.reservePrice, 7, { withSymbol: tokenSymbol })}
         />
-        <Stat
-          label="Sealed bids"
-          value={auction.sealedCount}
-          hint="encrypted, unreadable"
-        />
+        <Stat label="Sealed bids" value={auction.sealedCount} hint="encrypted, unreadable" />
         <Stat
           label="Revealed"
           value={closed ? auction.revealedCount : '—'}

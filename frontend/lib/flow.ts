@@ -142,7 +142,10 @@ export async function sealBidFlow(input: SealBidFlowInput): Promise<SealBidFlowR
       chain: QUICKNET,
       bidder: input.address,
     });
-    tracker.done('seal', `${bundle.envelopeBytes} bytes of ciphertext, sealed to round ${input.revealRound}`);
+    tracker.done(
+      'seal',
+      `${bundle.envelopeBytes} bytes of ciphertext, sealed to round ${input.revealRound}`,
+    );
   } catch (error) {
     tracker.fail('seal', messageFor(error));
     throw error;
@@ -264,17 +267,15 @@ async function runAction(
   }
 }
 
-export function revealBidFlow(
-  input: {
-    auctionId: bigint;
-    bidder: string;
-    amount: bigint;
-    salt: Uint8Array;
-    envelope: string;
-    networkPassphrase: string;
-    onProgress?: FlowProgress;
-  },
-): Promise<SubmitResponseDto> {
+export function revealBidFlow(input: {
+  auctionId: bigint;
+  bidder: string;
+  amount: bigint;
+  salt: Uint8Array;
+  envelope: string;
+  networkPassphrase: string;
+  onProgress?: FlowProgress;
+}): Promise<SubmitResponseDto> {
   return runAction(
     'reveal_bid',
     {
@@ -299,7 +300,11 @@ export function fundBidFlow(input: {
 }): Promise<SubmitResponseDto> {
   return runAction(
     'fund_bid',
-    { bidder: input.bidder, auctionId: input.auctionId.toString(), amount: input.amount.toString() },
+    {
+      bidder: input.bidder,
+      auctionId: input.auctionId.toString(),
+      amount: input.amount.toString(),
+    },
     input.bidder,
     input.networkPassphrase,
     input.onProgress,

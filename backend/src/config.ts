@@ -30,7 +30,10 @@ const booleanish = z.preprocess((value) => {
 }, z.boolean());
 
 /** Canonical RPC + Horizon endpoints per network. */
-export const NETWORK_ENDPOINTS: Record<z.infer<typeof NetworkName>, { rpc: string; horizon: string }> = {
+export const NETWORK_ENDPOINTS: Record<
+  z.infer<typeof NetworkName>,
+  { rpc: string; horizon: string }
+> = {
   testnet: {
     rpc: 'https://soroban-testnet.stellar.org',
     horizon: 'https://horizon-testnet.stellar.org',
@@ -81,10 +84,7 @@ const schema = z
     /** Optional explicit public keys, for verification against the on-chain set. */
     RELAYER_PUBLIC_KEYS: z.string().default(''),
 
-    DRAND_CHAIN_HASH: z
-      .string()
-      .length(64)
-      .default(QUICKNET.chainHash),
+    DRAND_CHAIN_HASH: z.string().length(64).default(QUICKNET.chainHash),
     DRAND_CHAIN_URL: z.string().url().default(QUICKNET.baseUrl),
 
     /** Postgres connection string. When absent the service uses an in-memory store. */
@@ -133,10 +133,7 @@ const schema = z
       horizonUrl: raw.STELLAR_HORIZON_URL ?? endpoints.horizon,
       relayerSecretKeys: splitList(raw.RELAYER_SECRET_KEYS),
       relayerPublicKeys: splitList(raw.RELAYER_PUBLIC_KEYS),
-      corsOrigins:
-        raw.CORS_ORIGINS === '*'
-          ? ('*' as const)
-          : splitList(raw.CORS_ORIGINS),
+      corsOrigins: raw.CORS_ORIGINS === '*' ? ('*' as const) : splitList(raw.CORS_ORIGINS),
       usePostgres: typeof raw.DATABASE_URL === 'string' && raw.DATABASE_URL.length > 0,
     };
   })

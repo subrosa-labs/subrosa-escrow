@@ -38,12 +38,20 @@ describe('MemoryStore jobs', () => {
     await store.upsertJob({ auctionId: '1', kind: 'attest', runAfter: sooner });
     expect((await store.listJobs('1'))[0]!.runAfter).toBe(sooner.toISOString());
 
-    await store.upsertJob({ auctionId: '1', kind: 'attest', runAfter: new Date(Date.now() + 900_000) });
+    await store.upsertJob({
+      auctionId: '1',
+      kind: 'attest',
+      runAfter: new Date(Date.now() + 900_000),
+    });
     expect((await store.listJobs('1'))[0]!.runAfter).toBe(sooner.toISOString());
   });
 
   it('does not claim a job before its run_after instant', async () => {
-    await store.upsertJob({ auctionId: '1', kind: 'reveal', runAfter: new Date(Date.now() + 60_000) });
+    await store.upsertJob({
+      auctionId: '1',
+      kind: 'reveal',
+      runAfter: new Date(Date.now() + 60_000),
+    });
     expect(await store.claimJobs(['reveal'], 10, 30_000)).toHaveLength(0);
   });
 
@@ -173,6 +181,10 @@ describe('MemoryStore envelopes and cache', () => {
         updatedAt: new Date().toISOString(),
       });
     }
-    expect((await store.listAuctionCache(10)).map((row) => row.auctionId)).toEqual(['10', '2', '1']);
+    expect((await store.listAuctionCache(10)).map((row) => row.auctionId)).toEqual([
+      '10',
+      '2',
+      '1',
+    ]);
   });
 });

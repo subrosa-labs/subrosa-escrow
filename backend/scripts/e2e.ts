@@ -69,7 +69,9 @@ async function main(): Promise<void> {
   }
 
   const step = (label: string, value: unknown): void => {
-    console.log(`  ${label.padEnd(22)} ${typeof value === 'object' ? JSON.stringify(value) : String(value)}`);
+    console.log(
+      `  ${label.padEnd(22)} ${typeof value === 'object' ? JSON.stringify(value) : String(value)}`,
+    );
   };
 
   console.log(`\nsubrosa end-to-end on ${app.network.name}`);
@@ -96,7 +98,10 @@ async function main(): Promise<void> {
   }
 
   // -- create the auction ---------------------------------------------------
-  const created = await invokeAs(app, seller, 'create_auction',
+  const created = await invokeAs(
+    app,
+    seller,
+    'create_auction',
     app.contract.createAuctionArgs(seller.publicKey(), {
       reservePrice: RESERVE,
       bond: BOND,
@@ -143,7 +148,10 @@ async function main(): Promise<void> {
       envelopeHash: bytesToHex(bundle.envelopeHash),
     });
 
-    const sealed = await invokeAs(app, entry.keypair, 'seal_bid',
+    const sealed = await invokeAs(
+      app,
+      entry.keypair,
+      'seal_bid',
       app.contract.sealBidArgs(
         auctionId,
         entry.keypair.publicKey(),
@@ -190,7 +198,10 @@ async function main(): Promise<void> {
       step(`fund ${entry.name}`, 'skipped (left under-funded on purpose)');
       continue;
     }
-    const funded = await invokeAs(app, entry.keypair, 'fund_bid',
+    const funded = await invokeAs(
+      app,
+      entry.keypair,
+      'fund_bid',
       app.contract.fundBidArgs(auctionId, entry.keypair.publicKey(), topUp),
     );
     step(`fund ${entry.name}`, funded.hash);
@@ -246,7 +257,10 @@ async function main(): Promise<void> {
       step(`claim ${entry.name}`, '0 (nothing owed)');
       continue;
     }
-    const tx = await invokeAs(app, entry.keypair, 'claim',
+    const tx = await invokeAs(
+      app,
+      entry.keypair,
+      'claim',
       app.contract.claimArgs(auctionId, entry.keypair.publicKey()),
     );
     claimedTotal += claimable;
@@ -314,6 +328,8 @@ function sleep(ms: number): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  console.error(`\n  FAIL: ${error instanceof Error ? (error.stack ?? error.message) : String(error)}\n`);
+  console.error(
+    `\n  FAIL: ${error instanceof Error ? (error.stack ?? error.message) : String(error)}\n`,
+  );
   process.exit(1);
 });

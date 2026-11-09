@@ -142,12 +142,7 @@ export function AuctionActions(props: AuctionActionsProps) {
 
   if (windows.settlement) {
     panels.push(
-      <SettlePanel
-        key="settle"
-        auction={auction}
-        address={address}
-        passphrase={passphrase}
-      />,
+      <SettlePanel key="settle" auction={auction} address={address} passphrase={passphrase} />,
     );
   }
 
@@ -181,7 +176,12 @@ export function AuctionActions(props: AuctionActionsProps) {
 
   if (windows.canCancel && isSeller) {
     panels.push(
-      <CancelPanel key="cancel" auction={auction} address={address as string} passphrase={passphrase} />,
+      <CancelPanel
+        key="cancel"
+        auction={auction}
+        address={address as string}
+        passphrase={passphrase}
+      />,
     );
   }
 
@@ -302,10 +302,9 @@ function RevealPanel({
       <div>
         <h3 className="text-sm font-medium text-ash-100">Reveal your bid</h3>
         <p className="mt-1 text-xs text-ash-400">
-          The reveal round has published, so your envelope can be opened. Revealing is
-          compulsory: the relayer will do it for you, but doing it yourself removes any
-          dependency on us. The bond is forfeit if this does not happen before the funding
-          deadline.
+          The reveal round has published, so your envelope can be opened. Revealing is compulsory:
+          the relayer will do it for you, but doing it yourself removes any dependency on us. The
+          bond is forfeit if this does not happen before the funding deadline.
         </p>
       </div>
 
@@ -361,14 +360,18 @@ function RevealPanel({
             {busy ? 'Revealing…' : 'Reveal from backup'}
           </button>
           <p className="text-xs text-ash-400">
-            A backup reveal needs no beacon access at all — the contract only checks the two
-            hashes, so this works even if drand and this relayer are both down.
+            A backup reveal needs no beacon access at all — the contract only checks the two hashes,
+            so this works even if drand and this relayer are both down.
           </p>
         </div>
       )}
 
       <StepList steps={steps} />
-      {error ? <Notice tone="error" title="Reveal failed">{error}</Notice> : null}
+      {error ? (
+        <Notice tone="error" title="Reveal failed">
+          {error}
+        </Notice>
+      ) : null}
     </div>
   );
 }
@@ -416,9 +419,9 @@ function FundPanel({
           <span className="font-mono text-ash-200">
             {formatAmount(bid.revealedAmount, tokenDecimals, { withSymbol: tokenSymbol })}
           </span>
-          , so that is what you owe the escrow — the bond you already posted does not count
-          towards it. Anything short by the funding deadline means the bond is slashed and paid
-          to the seller, and the next bidder up wins instead.
+          , so that is what you owe the escrow — the bond you already posted does not count towards
+          it. Anything short by the funding deadline means the bond is slashed and paid to the
+          seller, and the next bidder up wins instead.
         </p>
       </div>
 
@@ -480,7 +483,11 @@ function FundPanel({
       ) : null}
 
       <StepList steps={steps} />
-      {error ? <Notice tone="error" title="Escrow failed">{error}</Notice> : null}
+      {error ? (
+        <Notice tone="error" title="Escrow failed">
+          {error}
+        </Notice>
+      ) : null}
     </div>
   );
 }
@@ -507,8 +514,8 @@ function SettlePanel({
         <p className="mt-1 text-xs text-ash-400">
           The funding window has closed. Settlement is permissionless — the outcome is a fixed
           function of on-chain state, so <em>anyone</em> can trigger it and the result is the same.
-          The relayer's worker does this automatically; this button exists so you never have to
-          wait on it.
+          The relayer&rsquo;s worker does this automatically; this button exists so you never have
+          to wait on it.
         </p>
       </div>
 
@@ -535,7 +542,11 @@ function SettlePanel({
       ) : null}
 
       <StepList steps={steps} />
-      {error ? <Notice tone="error" title="Settlement failed">{error}</Notice> : null}
+      {error ? (
+        <Notice tone="error" title="Settlement failed">
+          {error}
+        </Notice>
+      ) : null}
     </div>
   );
 }
@@ -571,8 +582,8 @@ function ClaimPanel({
             {formatAmount(claimable, tokenDecimals, { withSymbol: tokenSymbol })}
           </span>{' '}
           is owed to <span className="font-mono">{address ? shortenAddress(address) : 'you'}</span>.
-          Refunds are derived on demand from your own bid, which is why settlement never has to
-          pay out to every losing bidder at once.
+          Refunds are derived on demand from your own bid, which is why settlement never has to pay
+          out to every losing bidder at once.
         </p>
       </div>
 
@@ -591,11 +602,17 @@ function ClaimPanel({
           )
         }
       >
-        {busy ? 'Claiming…' : `Claim ${formatAmount(claimable, tokenDecimals, { withSymbol: tokenSymbol })}`}
+        {busy
+          ? 'Claiming…'
+          : `Claim ${formatAmount(claimable, tokenDecimals, { withSymbol: tokenSymbol })}`}
       </button>
 
       <StepList steps={steps} />
-      {error ? <Notice tone="error" title="Claim failed">{error}</Notice> : null}
+      {error ? (
+        <Notice tone="error" title="Claim failed">
+          {error}
+        </Notice>
+      ) : null}
     </div>
   );
 }
@@ -628,8 +645,11 @@ function CancelPanel({
             <>
               {' '}
               <span className="text-amber2">
-                There {auction.sealedCount === 1 ? 'is 1 sealed bid' : `are ${auction.sealedCount} sealed bids`},
-                so your seller bond is liquidated and split between them as compensation for the
+                There{' '}
+                {auction.sealedCount === 1
+                  ? 'is 1 sealed bid'
+                  : `are ${auction.sealedCount} sealed bids`}
+                , so your seller bond is liquidated and split between them as compensation for the
                 wasted commitment.
               </span>
             </>
@@ -664,7 +684,11 @@ function CancelPanel({
       )}
 
       <StepList steps={steps} />
-      {error ? <Notice tone="error" title="Cancel failed">{error}</Notice> : null}
+      {error ? (
+        <Notice tone="error" title="Cancel failed">
+          {error}
+        </Notice>
+      ) : null}
     </div>
   );
 }

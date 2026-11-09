@@ -30,7 +30,10 @@ function armour(payload: string): string {
 const SALT = '1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100';
 const BIDDER = 'GACDNJLVD52ENYH6CDCYBYXFEO72V3UKRAMQECZAB5H5MZVZ6EJDTHWQ';
 
-function envelopeFor(auctionId: bigint, amount: bigint): {
+function envelopeFor(
+  auctionId: bigint,
+  amount: bigint,
+): {
   envelope: string;
   envelopeHash: string;
   commitment: string;
@@ -39,9 +42,7 @@ function envelopeFor(auctionId: bigint, amount: bigint): {
   return {
     envelope,
     envelopeHash: bytesToHex(sha256(new Uint8Array(Buffer.from(envelope, 'utf8')))),
-    commitment: bytesToHex(
-      computeCommitment({ auctionId, amount, salt: hexToBytes32(SALT) }),
-    ),
+    commitment: bytesToHex(computeCommitment({ auctionId, amount, salt: hexToBytes32(SALT) })),
   };
 }
 

@@ -1,7 +1,7 @@
 # SubRosa Escrow
 
 **A sealed-bid auction and escrow engine on Stellar.** Bids are encrypted in the bidder's
-browser to a *future* drand round, so no plaintext bid exists anywhere — not on the ledger,
+browser to a _future_ drand round, so no plaintext bid exists anywhere — not on the ledger,
 not in the relayer's database, not in its memory — until that round's threshold signature is
 published. Once published, the key is public to everybody at the same instant.
 
@@ -30,12 +30,12 @@ Sealing with timelock encryption removes the choice instead of trusting it. The 
 encrypted to a drand round that does not exist yet; the decryption key is a threshold
 signature the League of Entropy will publish, and no single party can produce it early. So:
 
-* **Nobody can read a bid early** — not the seller, not the relayer, not a validator, not
+- **Nobody can read a bid early** — not the seller, not the relayer, not a validator, not
   the bidder's own client after the fact.
-* **Everybody can open one later.** At the reveal round the key becomes public, so the
+- **Everybody can open one later.** At the reveal round the key becomes public, so the
   bidder, our relayer, or a stranger reading the chain can all complete the same reveal.
   A bidder who would rather not reveal no longer has a move.
-* **Nobody can invent a bid late either** — the sealed envelope's hash is anchored on-chain
+- **Nobody can invent a bid late either** — the sealed envelope's hash is anchored on-chain
   at seal time, so the opening has to be the one that was committed to.
 
 ---
@@ -131,21 +131,21 @@ the seal is a signed transaction — the ciphertext itself is computed in the pa
 
 ## Repository layout
 
-| Path | What it is |
-| --- | --- |
-| `contracts/subrosa_escrow/src/lib.rs` | The contract: escrow, phases, bonds, settlement, claims. |
-| `contracts/subrosa_escrow/src/types.rs` | Persisted types and the documented preimage layouts. |
-| `contracts/subrosa_escrow/src/test.rs` | Rust tests, including the golden-vector byte tests. |
-| `backend/src/drand/` | Chain params, commitment, beacon verification, tlock, envelope encoding. |
-| `backend/src/stellar/` | ScVal encoding, contract bindings, submission, and error mapping. |
-| `backend/src/services/orchestrator.ts` | The relayer's actual behaviour: observe, attest, reveal, settle. |
-| `backend/src/services/bulletin.ts` | The sealed-envelope bulletin board. |
-| `backend/src/api/server.ts` | The HTTP API. Notably: no endpoint takes a bid amount. |
-| `backend/src/store/` | Job queue, auction cache, envelopes. Postgres, or in-memory for dev/tests. |
-| `frontend/lib/tlock.ts` | Where the privacy guarantee is established — sealing in the browser. |
-| `frontend/components/` | Auction UI. `AuctionActions` is the lifecycle control room. |
-| `frontend/app/how/page.tsx` | The same design explanation, aimed at users rather than auditors. |
-| `FUNDING.json` | Protocol metadata: deployed addresses, pinned parameters, invariants, validation steps. |
+| Path                                    | What it is                                                                              |
+| --------------------------------------- | --------------------------------------------------------------------------------------- |
+| `contracts/subrosa_escrow/src/lib.rs`   | The contract: escrow, phases, bonds, settlement, claims.                                |
+| `contracts/subrosa_escrow/src/types.rs` | Persisted types and the documented preimage layouts.                                    |
+| `contracts/subrosa_escrow/src/test.rs`  | Rust tests, including the golden-vector byte tests.                                     |
+| `backend/src/drand/`                    | Chain params, commitment, beacon verification, tlock, envelope encoding.                |
+| `backend/src/stellar/`                  | ScVal encoding, contract bindings, submission, and error mapping.                       |
+| `backend/src/services/orchestrator.ts`  | The relayer's actual behaviour: observe, attest, reveal, settle.                        |
+| `backend/src/services/bulletin.ts`      | The sealed-envelope bulletin board.                                                     |
+| `backend/src/api/server.ts`             | The HTTP API. Notably: no endpoint takes a bid amount.                                  |
+| `backend/src/store/`                    | Job queue, auction cache, envelopes. Postgres, or in-memory for dev/tests.              |
+| `frontend/lib/tlock.ts`                 | Where the privacy guarantee is established — sealing in the browser.                    |
+| `frontend/components/`                  | Auction UI. `AuctionActions` is the lifecycle control room.                             |
+| `frontend/app/how/page.tsx`             | The same design explanation, aimed at users rather than auditors.                       |
+| `FUNDING.json`                          | Protocol metadata: deployed addresses, pinned parameters, invariants, validation steps. |
 
 ---
 
@@ -197,21 +197,21 @@ encoder against the contract's, on-chain, without deploying anything.
 Reads answer from the chain with targeted simulations. Nothing here can contradict on-chain
 state. Full request/response examples: [`docs/API.md`](./docs/API.md).
 
-| Method | Path | Notes |
-| --- | --- | --- |
-| `GET` | `/healthz` | Ledger height, network passphrase, store/RPC status, preflight problems. |
-| `GET` | `/v1/config` | The contract's configuration, read live. |
-| `GET` | `/v1/drand/info` | Beacon id, chain hash, latest round, time to the next one. |
-| `GET` | `/v1/auctions` | Newest auctions from the chain, falling back to the cache for old pages. |
-| `GET` | `/v1/auctions/:id` | Auction, timing, windows, attestation, envelope count, and — with `?claimant=` — the caller's claimable balance. |
-| `GET` | `/v1/auctions/:id/bids` | Commitments, bonds, escrowed totals, reveal state. |
-| `GET` | `/v1/auctions/:id/activity` | Submissions and queued jobs, for operating the thing. |
-| `POST` | `/v1/auctions/:id/envelopes` | Publish a sealed ciphertext. Accepts a hash and an envelope, never an amount. |
-| `GET` | `/v1/auctions/:id/envelopes/:bidder` | One bidder's ciphertext, used by the reveal flow. |
-| `GET` | `/v1/auctions/:id/attestation` | The beacon attestation, its round, and its signer set. |
-| `POST` | `/v1/tx/prepare` | Build an unsigned invoke transaction. Bodies carry hashes, not amounts. |
-| `POST` | `/v1/tx/submit` | Broadcast a signed envelope, optionally fee-sponsored. |
-| `POST` | `/v1/admin/*` | Observation, manual advance, self-check. Only registered when `ADMIN_TOKEN` is set. |
+| Method | Path                                 | Notes                                                                                                            |
+| ------ | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/healthz`                           | Ledger height, network passphrase, store/RPC status, preflight problems.                                         |
+| `GET`  | `/v1/config`                         | The contract's configuration, read live.                                                                         |
+| `GET`  | `/v1/drand/info`                     | Beacon id, chain hash, latest round, time to the next one.                                                       |
+| `GET`  | `/v1/auctions`                       | Newest auctions from the chain, falling back to the cache for old pages.                                         |
+| `GET`  | `/v1/auctions/:id`                   | Auction, timing, windows, attestation, envelope count, and — with `?claimant=` — the caller's claimable balance. |
+| `GET`  | `/v1/auctions/:id/bids`              | Commitments, bonds, escrowed totals, reveal state.                                                               |
+| `GET`  | `/v1/auctions/:id/activity`          | Submissions and queued jobs, for operating the thing.                                                            |
+| `POST` | `/v1/auctions/:id/envelopes`         | Publish a sealed ciphertext. Accepts a hash and an envelope, never an amount.                                    |
+| `GET`  | `/v1/auctions/:id/envelopes/:bidder` | One bidder's ciphertext, used by the reveal flow.                                                                |
+| `GET`  | `/v1/auctions/:id/attestation`       | The beacon attestation, its round, and its signer set.                                                           |
+| `POST` | `/v1/tx/prepare`                     | Build an unsigned invoke transaction. Bodies carry hashes, not amounts.                                          |
+| `POST` | `/v1/tx/submit`                      | Broadcast a signed envelope, optionally fee-sponsored.                                                           |
+| `POST` | `/v1/admin/*`                        | Observation, manual advance, self-check. Only registered when `ADMIN_TOKEN` is set.                              |
 
 ---
 
@@ -253,20 +253,20 @@ simple cases and silently diverges from Rust's `i128::to_be_bytes`.
 
 Backend (`backend/.env.example`) — the load-bearing entries:
 
-| Variable | Purpose |
-| --- | --- |
-| `SUBROSA_CONTRACT_ID` | The deployed contract. Required; the service refuses to boot without it. |
-| `RELAYER_SECRET_KEYS` | Ed25519 relayer keys (`S...`). **One key per operator.** Holding ≥ threshold in one place collapses the quorum. |
-| `DRAND_CHAIN_HASH` | Pinned quicknet chain hash. Changing it without redeploying the contract invalidates every attestation. |
-| `DATABASE_URL` | Postgres. Unset uses an in-memory store — fine for dev and tests, and it degrades reveal *availability*, never correctness. |
-| `WORKER_ENABLED` | Runs the observe/attest/reveal/settle loop in-process. |
-| `ADMIN_TOKEN` | Enables `/v1/admin/*`. Leave unset in public deployments. |
+| Variable              | Purpose                                                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `SUBROSA_CONTRACT_ID` | The deployed contract. Required; the service refuses to boot without it.                                                    |
+| `RELAYER_SECRET_KEYS` | Ed25519 relayer keys (`S...`). **One key per operator.** Holding ≥ threshold in one place collapses the quorum.             |
+| `DRAND_CHAIN_HASH`    | Pinned quicknet chain hash. Changing it without redeploying the contract invalidates every attestation.                     |
+| `DATABASE_URL`        | Postgres. Unset uses an in-memory store — fine for dev and tests, and it degrades reveal _availability_, never correctness. |
+| `WORKER_ENABLED`      | Runs the observe/attest/reveal/settle loop in-process.                                                                      |
+| `ADMIN_TOKEN`         | Enables `/v1/admin/*`. Leave unset in public deployments.                                                                   |
 
 Frontend (`frontend/.env.example`):
 
-| Variable | Purpose |
-| --- | --- |
-| `NEXT_PUBLIC_SUBROSA_API_URL` | Where the relayer lives. |
+| Variable                        | Purpose                                                                                                               |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUBROSA_API_URL`   | Where the relayer lives.                                                                                              |
 | `NEXT_PUBLIC_SETTLEMENT_SYMBOL` | Display symbol only. A Soroban contract cannot read an SAC's metadata, so the name is configured rather than fetched. |
 
 ---

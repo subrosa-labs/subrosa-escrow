@@ -82,13 +82,15 @@ describe('bid commitment', () => {
       salt: hexToBytes32(vectors.negative.salt),
     });
     expect(bytesToHex(preimage)).toBe(vectors.negative.preimageHex);
-    expect(bytesToHex(
-      computeCommitment({
-        auctionId: BigInt(vectors.negative.auctionId),
-        amount: BigInt(vectors.negative.amount),
-        salt: hexToBytes32(vectors.negative.salt),
-      }),
-    )).toBe(vectors.negative.commitment);
+    expect(
+      bytesToHex(
+        computeCommitment({
+          auctionId: BigInt(vectors.negative.auctionId),
+          amount: BigInt(vectors.negative.amount),
+          salt: hexToBytes32(vectors.negative.salt),
+        }),
+      ),
+    ).toBe(vectors.negative.commitment);
   });
 
   it('changes when any bound field changes', () => {
@@ -103,9 +105,9 @@ describe('bid commitment', () => {
   });
 
   it('rejects a salt that is not 32 bytes', () => {
-    expect(() =>
-      bidPreimage({ auctionId: 1n, amount: 1n, salt: new Uint8Array(31) }),
-    ).toThrow(/salt must be 32 bytes/);
+    expect(() => bidPreimage({ auctionId: 1n, amount: 1n, salt: new Uint8Array(31) })).toThrow(
+      /salt must be 32 bytes/,
+    );
   });
 });
 
@@ -181,8 +183,8 @@ describe('beacon digest', () => {
     expect(bytesToHex(computeBeaconDigest({ ...base, round: 1_001 }))).not.toBe(
       bytesToHex(computeBeaconDigest(base)),
     );
-    expect(
-      bytesToHex(computeBeaconDigest({ ...base, randomnessHex: 'ff'.repeat(32) })),
-    ).not.toBe(bytesToHex(computeBeaconDigest(base)));
+    expect(bytesToHex(computeBeaconDigest({ ...base, randomnessHex: 'ff'.repeat(32) }))).not.toBe(
+      bytesToHex(computeBeaconDigest(base)),
+    );
   });
 });

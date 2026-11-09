@@ -60,9 +60,11 @@ export function isXdrType(value: unknown, name: string): boolean {
 /** A JSON view of an XDR value, for logs and regex-based error extraction. */
 export function describeScVal(value: unknown): string {
   try {
-    return JSON.stringify(value, (_key, candidate) =>
-      typeof candidate === 'bigint' ? candidate.toString() : candidate,
-    ) ?? String(value);
+    return (
+      JSON.stringify(value, (_key, candidate) =>
+        typeof candidate === 'bigint' ? candidate.toString() : candidate,
+      ) ?? String(value)
+    );
   } catch {
     return String(value);
   }

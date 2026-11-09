@@ -14,8 +14,7 @@ const PASSPHRASES: Record<Config['STELLAR_NETWORK'], string> = {
   testnet: Networks.TESTNET,
   futurenet: Networks.FUTURENET,
   mainnet: Networks.PUBLIC,
-  standalone:
-    'Standalone Network ; February 2017',
+  standalone: 'Standalone Network ; February 2017',
 };
 
 export function resolveNetwork(config: Config): StellarNetwork {
@@ -36,7 +35,10 @@ export function createServer(network: StellarNetwork): rpc.Server {
 }
 
 /** Raw explorer links, for humans reading logs and API responses. */
-export function explorerLinks(network: StellarNetwork, txHash: string): { horizon: string; stellarExpert: string } {
+export function explorerLinks(
+  network: StellarNetwork,
+  txHash: string,
+): { horizon: string; stellarExpert: string } {
   const horizonBase =
     network.name === 'mainnet'
       ? 'https://stellar.expert/explorer/public'

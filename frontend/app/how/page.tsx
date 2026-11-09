@@ -81,10 +81,10 @@ export default async function HowPage() {
         </p>
         <p>
           Once the round publishes, the relayer verifies the BLS signature against quicknet&rsquo;s
-          pinned public key and then opens{' '}
-          <em>every</em> envelope it holds, submitting the openings in a batch. Revealing is
-          permissionless on-chain, so this is a convenience, not a privilege: any observer can do
-          the same, and the bidder can always do it themselves from the backup file they saved.
+          pinned public key and then opens <em>every</em> envelope it holds, submitting the openings
+          in a batch. Revealing is permissionless on-chain, so this is a convenience, not a
+          privilege: any observer can do the same, and the bidder can always do it themselves from
+          the backup file they saved.
         </p>
       </Section>
 
@@ -99,8 +99,8 @@ export default async function HowPage() {
         </p>
         <Code>{BEACON_DIGEST}</Code>
         <p>
-          Binding <span className="font-mono">auction_id</span> means an attestation gathered for one
-          auction cannot be replayed into another. Binding{' '}
+          Binding <span className="font-mono">auction_id</span> means an attestation gathered for
+          one auction cannot be replayed into another. Binding{' '}
           <span className="font-mono">chain_hash</span> means an attestation from a different drand
           network is rejected — and the chain hash is pinned in the contract at initialisation, not
           supplied per call.
@@ -135,12 +135,11 @@ export default async function HowPage() {
         <p>
           Soroban meters every ledger entry a transaction touches, so a design that writes one
           refund per losing bidder breaks quietly at scale. Settlement here is one bounded read pass
-          and three writes: it scans at most{' '}
-          <span className="font-mono">max_bids</span> already-revealed bids to find the hammer price
-          and total the slashed bonds, credits the seller and treasury through a claim ledger, and
-          stops. Losing bidders&rsquo; refunds are derived on demand in{' '}
-          <span className="font-mono">claim</span> from their own bid and the auction&rsquo;s
-          terminal state, so each claimant pays only for their own entry.
+          and three writes: it scans at most <span className="font-mono">max_bids</span>{' '}
+          already-revealed bids to find the hammer price and total the slashed bonds, credits the
+          seller and treasury through a claim ledger, and stops. Losing bidders&rsquo; refunds are
+          derived on demand in <span className="font-mono">claim</span> from their own bid and the
+          auction&rsquo;s terminal state, so each claimant pays only for their own entry.
         </p>
         <p>
           Settlement itself is permissionless. The winner is a deterministic function of state, so
@@ -151,12 +150,20 @@ export default async function HowPage() {
 
       <Section title="What an observer sees">
         <div className="grid gap-4 sm:grid-cols-2">
-          <Stat label="Always visible" value="auction terms, bond sizes, bidder addresses, timings" mono={false} />
-          <Stat label="Visible after the reveal round" value="amounts, the winner, the hammer price" mono={false} />
+          <Stat
+            label="Always visible"
+            value="auction terms, bond sizes, bidder addresses, timings"
+            mono={false}
+          />
+          <Stat
+            label="Visible after the reveal round"
+            value="amounts, the winner, the hammer price"
+            mono={false}
+          />
         </div>
         <p className="mt-3">
-          Before the commit deadline the sealed count is public — the number of envelopes, not
-          what is inside them. That is a deliberate tradeoff: hiding the count would mean hiding the
+          Before the commit deadline the sealed count is public — the number of envelopes, not what
+          is inside them. That is a deliberate tradeoff: hiding the count would mean hiding the
           on-chain bid entries themselves, which this contract does not attempt. What it does
           guarantee is that no amount is knowable, by anyone, until the beacon publishes.
         </p>

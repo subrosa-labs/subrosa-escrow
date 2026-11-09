@@ -28,7 +28,12 @@ import {
 } from '@stellar/stellar-sdk';
 import { childLogger, type Logger } from '../logger.ts';
 import type { StellarNetwork } from './network.ts';
-import { contractErrorName, parseContractErrorCode, SubmissionError, isRetryable } from './errors.ts';
+import {
+  contractErrorName,
+  parseContractErrorCode,
+  SubmissionError,
+  isRetryable,
+} from './errors.ts';
 import { describeScVal } from './xdr-shape.ts';
 
 export interface PreparedInvocation {
@@ -101,7 +106,12 @@ export class Relayer {
         code === undefined
           ? `simulation of ${method} failed: ${simulation.error}`
           : `simulation of ${method} failed: ${contractErrorName(code)} (contract error #${code})`,
-        { ...(code !== undefined ? { contractErrorCode: code, contractErrorName: contractErrorName(code) } : {}), raw: simulation.error },
+        {
+          ...(code !== undefined
+            ? { contractErrorCode: code, contractErrorName: contractErrorName(code) }
+            : {}),
+          raw: simulation.error,
+        },
       );
     }
 
@@ -141,7 +151,9 @@ export class Relayer {
         return {
           ok: false,
           error: error.message,
-          ...(error.detail.contractErrorCode !== undefined ? { code: error.detail.contractErrorCode } : {}),
+          ...(error.detail.contractErrorCode !== undefined
+            ? { code: error.detail.contractErrorCode }
+            : {}),
         };
       }
       return { ok: false, error: error instanceof Error ? error.message : String(error) };
@@ -283,7 +295,10 @@ export class Relayer {
  * returns `undefined` and the caller reports the raw status instead of guessing —
  * a misleading error code would be worse than no error code.
  */
-function extractDiagnostic(final: { status: string; diagnosticEvents?: unknown }): string | undefined {
+function extractDiagnostic(final: {
+  status: string;
+  diagnosticEvents?: unknown;
+}): string | undefined {
   const events = Array.isArray(final.diagnosticEvents) ? final.diagnosticEvents : [];
   for (const event of events) {
     const record = event as { event?: { body?: unknown } };

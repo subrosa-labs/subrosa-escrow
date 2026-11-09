@@ -6,7 +6,15 @@
  * executed, because the caller decides who signs and who pays.
  */
 
-import { Account, BASE_FEE, Contract, TransactionBuilder, rpc, scValToNative, xdr } from '@stellar/stellar-sdk';
+import {
+  Account,
+  BASE_FEE,
+  Contract,
+  TransactionBuilder,
+  rpc,
+  scValToNative,
+  xdr,
+} from '@stellar/stellar-sdk';
 import { NULL_ACCOUNT } from '@stellar/stellar-sdk/contract';
 import { EncodingError } from '../util/bytes.ts';
 import {
@@ -277,7 +285,10 @@ export class SubRosaContract {
   }
 
   async findBid(auctionId: bigint, bidder: string): Promise<BidView | undefined> {
-    const value = await this.simulateOptional('get_bid', [u64ScVal(auctionId), addressScVal(bidder)]);
+    const value = await this.simulateOptional('get_bid', [
+      u64ScVal(auctionId),
+      addressScVal(bidder),
+    ]);
     return value === undefined ? undefined : decodeBid(value);
   }
 
@@ -295,7 +306,10 @@ export class SubRosaContract {
   }
 
   async timestampForRound(round: number): Promise<bigint> {
-    return asBigInt(await this.simulate('timestamp_for_round', [u64ScVal(BigInt(round))]), 'timestamp_for_round');
+    return asBigInt(
+      await this.simulate('timestamp_for_round', [u64ScVal(BigInt(round))]),
+      'timestamp_for_round',
+    );
   }
 
   /** Assert the client's idea of the world matches the deployed contract. */
@@ -368,7 +382,9 @@ function decodeBid(raw: unknown): BidView {
   return {
     bidder: asString(record['bidder'], 'bid.bidder'),
     commitment: Buffer.from(asBytes32(record['commitment'], 'bid.commitment')).toString('hex'),
-    envelopeHash: Buffer.from(asBytes32(record['envelope_hash'], 'bid.envelope_hash')).toString('hex'),
+    envelopeHash: Buffer.from(asBytes32(record['envelope_hash'], 'bid.envelope_hash')).toString(
+      'hex',
+    ),
     bond: asBigInt(record['bond'], 'bid.bond'),
     funded: asBigInt(record['funded'], 'bid.funded'),
     revealed: asBoolean(record['revealed'], 'bid.revealed'),
@@ -393,10 +409,16 @@ function decodeConfig(raw: unknown): ConfigView {
     drandGenesis: asNumber(record['drand_genesis'], 'config.drand_genesis'),
     drandPeriod: asNumber(record['drand_period'], 'config.drand_period'),
     maxBids: asNumber(record['max_bids'], 'config.max_bids'),
-    assumedLedgerSeconds: asNumber(record['assumed_ledger_seconds'], 'config.assumed_ledger_seconds'),
+    assumedLedgerSeconds: asNumber(
+      record['assumed_ledger_seconds'],
+      'config.assumed_ledger_seconds',
+    ),
     marginRounds: asNumber(record['margin_rounds'], 'config.margin_rounds'),
     minBond: asBigInt(record['min_bond'], 'config.min_bond'),
-    minRevealLeadLedgers: asNumber(record['min_reveal_lead_ledgers'], 'config.min_reveal_lead_ledgers'),
+    minRevealLeadLedgers: asNumber(
+      record['min_reveal_lead_ledgers'],
+      'config.min_reveal_lead_ledgers',
+    ),
     paused: asBoolean(record['paused'], 'config.paused'),
   };
 }

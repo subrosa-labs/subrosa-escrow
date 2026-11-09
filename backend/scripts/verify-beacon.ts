@@ -41,7 +41,9 @@ async function main(): Promise<void> {
   const client = createDrandClient(chain);
 
   const info = await fetchChainInfo(client, chain);
-  console.log(`chain      ${info.beaconId}  period=${info.periodSeconds}s  scheme=${info.schemeId}`);
+  console.log(
+    `chain      ${info.beaconId}  period=${info.periodSeconds}s  scheme=${info.schemeId}`,
+  );
   console.log(`chain hash ${info.chainHash}`);
   console.log(`public key ${info.publicKey.slice(0, 32)}…`);
 

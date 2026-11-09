@@ -24,7 +24,10 @@ export function Notice({
   } as const;
 
   return (
-    <div className={`rounded-lg border p-4 text-sm ${tones[tone]}`} role={tone === 'error' ? 'alert' : undefined}>
+    <div
+      className={`rounded-lg border p-4 text-sm ${tones[tone]}`}
+      role={tone === 'error' ? 'alert' : undefined}
+    >
       {title ? <p className="font-medium">{title}</p> : null}
       <div className={title ? 'mt-1 opacity-90' : 'opacity-90'}>{children}</div>
     </div>
@@ -52,8 +55,17 @@ export function Stat({
 }
 
 /** Truncated hash with the full value in the tooltip and the copy affordance. */
-export function Hash({ value, label, chars = 10 }: { value: string; label?: string; chars?: number }) {
-  const short = value.length > chars * 2 + 1 ? `${value.slice(0, chars)}…${value.slice(-chars)}` : value;
+export function Hash({
+  value,
+  label,
+  chars = 10,
+}: {
+  value: string;
+  label?: string;
+  chars?: number;
+}) {
+  const short =
+    value.length > chars * 2 + 1 ? `${value.slice(0, chars)}…${value.slice(-chars)}` : value;
   return (
     <span className="font-mono text-xs text-ash-200" title={value}>
       {label ? <span className="text-ash-400">{label} </span> : null}

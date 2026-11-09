@@ -8,12 +8,12 @@ called out and gated.
 
 ## 0. Prerequisites
 
-| Tool | Version | Needed for |
-| --- | --- | --- |
-| Node | ≥ 22.7.0 | Backend and frontend. The backend runs TypeScript directly via `--experimental-transform-types`, which landed in 22.7.0. |
-| Rust | ≥ 1.81.0, with `wasm32-unknown-unknown` | Building the contract |
-| Stellar CLI | ≥ 22.1.0 | Deploying and invoking the contract |
-| Postgres | ≥ 14 | Production persistence. Optional in development. |
+| Tool        | Version                                 | Needed for                                                                                                               |
+| ----------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Node        | ≥ 22.7.0                                | Backend and frontend. The backend runs TypeScript directly via `--experimental-transform-types`, which landed in 22.7.0. |
+| Rust        | ≥ 1.81.0, with `wasm32-unknown-unknown` | Building the contract                                                                                                    |
+| Stellar CLI | ≥ 22.1.0                                | Deploying and invoking the contract                                                                                      |
+| Postgres    | ≥ 14                                    | Production persistence. Optional in development.                                                                         |
 
 ```bash
 rustup target add wasm32-unknown-unknown
@@ -181,10 +181,10 @@ node --env-file=backend/.env --experimental-transform-types backend/src/index.ts
 
 **Read the preflight output.** The service checks, and keeps reporting through `/healthz`:
 
-* Soroban RPC reachable;
-* the contract answers `schema_version` with a version this build understands;
-* the store is healthy;
-* the relayer's own key set can actually satisfy the on-chain quorum (right keys, enough of
+- Soroban RPC reachable;
+- the contract answers `schema_version` with a version this build understands;
+- the store is healthy;
+- the relayer's own key set can actually satisfy the on-chain quorum (right keys, enough of
   them, matching chain hash).
 
 ```bash
@@ -227,7 +227,7 @@ npm run build --workspace frontend
 npm start --workspace frontend       # or deploy the workspace to your host
 ```
 
-The URL must be reachable *from the browser*, and the relayer's `CORS_ORIGINS` must list the
+The URL must be reachable _from the browser_, and the relayer's `CORS_ORIGINS` must list the
 frontend's origin. Everything else — reads, the seal flow's hash upload, transaction assembly —
 goes through that one URL.
 
@@ -258,7 +258,7 @@ previous one having actually happened on-chain:
    the beacon publishes, not before;
 4. escrow the revealed amount, settle, and claim the refund from the losing account.
 
-If step 3 shows an amount *before* the round's publish time, stop and treat it as a
+If step 3 shows an amount _before_ the round's publish time, stop and treat it as a
 vulnerability rather than a bug — that is the single property the whole design exists to
 provide.
 
@@ -268,12 +268,12 @@ provide.
 
 **What to watch**
 
-| Signal | Why |
-| --- | --- |
-| `/healthz` — `preflight`, `rpc`, `store` | The whole relay path in one call. |
-| `/v1/auctions/:id/activity` — job statuses and `lastError` | A job stuck in `failed` means an auction will not settle itself. |
-| Job attempts climbing | Usually a submission error: out of fee balance, or a key that is not in the on-chain quorum. |
-| Relayer account XLM balance | The relayer pays its own fees, and sponsors user transactions. Running dry stalls reveals. |
+| Signal                                                     | Why                                                                                          |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `/healthz` — `preflight`, `rpc`, `store`                   | The whole relay path in one call.                                                            |
+| `/v1/auctions/:id/activity` — job statuses and `lastError` | A job stuck in `failed` means an auction will not settle itself.                             |
+| Job attempts climbing                                      | Usually a submission error: out of fee balance, or a key that is not in the on-chain quorum. |
+| Relayer account XLM balance                                | The relayer pays its own fees, and sponsors user transactions. Running dry stalls reveals.   |
 
 **Manual override.** When the worker is wedged, the admin routes let a human drive the same
 machinery:
@@ -289,14 +289,14 @@ reason funds are inaccessible.
 
 **Incidents**
 
-| Symptom | Likely cause | Action |
-| --- | --- | --- |
-| Attestations fail with `AttestationInvalid` | Relayer keys are not in the on-chain set, or the chain hash differs | `POST /v1/admin/selfcheck`; rotate with `set_relayers` if the key set genuinely changed |
-| Attestation fails with a BLS error | drand unreachable or the beacon is not published yet | Nothing to do — the job defers and retries |
-| Reveals fail with `BeaconUnavailable` | The attestation has not landed yet | Wait; the orchestrator orders attest before reveal |
-| Reveals fail with `EnvelopeHashMismatch` | The stored ciphertext is not the one committed | The bidder's backup reveals it; investigate the bulletin write path |
-| Reveals fail with `CommitmentMismatch` | Encoder drift between client and contract | Treat as a release blocker. `npm test` should have caught it; check the deployed contract's `hash_commitment` against the client |
-| Settlement never fires | Relayer out of XLM, or the worker is disabled | Fund the account, or settle manually — it is permissionless |
+| Symptom                                     | Likely cause                                                        | Action                                                                                                                           |
+| ------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Attestations fail with `AttestationInvalid` | Relayer keys are not in the on-chain set, or the chain hash differs | `POST /v1/admin/selfcheck`; rotate with `set_relayers` if the key set genuinely changed                                          |
+| Attestation fails with a BLS error          | drand unreachable or the beacon is not published yet                | Nothing to do — the job defers and retries                                                                                       |
+| Reveals fail with `BeaconUnavailable`       | The attestation has not landed yet                                  | Wait; the orchestrator orders attest before reveal                                                                               |
+| Reveals fail with `EnvelopeHashMismatch`    | The stored ciphertext is not the one committed                      | The bidder's backup reveals it; investigate the bulletin write path                                                              |
+| Reveals fail with `CommitmentMismatch`      | Encoder drift between client and contract                           | Treat as a release blocker. `npm test` should have caught it; check the deployed contract's `hash_commitment` against the client |
+| Settlement never fires                      | Relayer out of XLM, or the worker is disabled                       | Fund the account, or settle manually — it is permissionless                                                                      |
 
 ---
 

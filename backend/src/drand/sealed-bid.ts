@@ -31,9 +31,7 @@ import { z } from 'zod';
 export const SEALED_BID_VERSION = 1;
 
 const decimalString = (field: string) =>
-  z
-    .string()
-    .regex(/^\d+$/, `${field} must be a non-negative decimal integer string`);
+  z.string().regex(/^\d+$/, `${field} must be a non-negative decimal integer string`);
 
 const hex32 = (field: string) =>
   z.string().regex(/^[0-9a-f]{64}$/, `${field} must be 32 bytes of lowercase hex`);
